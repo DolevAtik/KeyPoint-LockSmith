@@ -3,9 +3,9 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// Update this to the real domain before launch — it drives the canonical URL,
-// Open Graph tags, sitemap.xml and the JSON-LD business record.
-const SITE = process.env.PUBLIC_SITE_URL || 'https://keypointlocksmith.com';
+// Temporary Vercel host until a custom domain is connected — drives canonical,
+// Open Graph, sitemap.xml and the JSON-LD business record.
+const SITE = process.env.PUBLIC_SITE_URL || 'https://keypoint-locksmith-one.vercel.app';
 
 export default defineConfig({
   site: SITE,
