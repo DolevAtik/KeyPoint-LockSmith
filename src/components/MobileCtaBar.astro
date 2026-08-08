@@ -61,23 +61,48 @@ const wa = whatsappHref(WA_DEFAULT_MESSAGE);
 <script>
   const bar = document.getElementById('kp-mobile-cta');
   const hero = document.getElementById('home');
+  const contact = document.getElementById('contact');
 
   if (bar && hero && window.matchMedia('(max-width: 63.99rem)').matches) {
     bar.hidden = false;
 
-    const setVisible = (show: boolean) => {
+    let pastHero = false;
+    let inContact = false;
+
+    const sync = () => {
+      const show = pastHero && !inContact;
       bar.classList.toggle('is-visible', show);
       document.body.classList.toggle('has-mobile-cta', show);
     };
 
     if ('IntersectionObserver' in window) {
-      // Reveal once the hero — and its Call/WhatsApp buttons — has scrolled by.
+      // Visible only between hero and contact — avoids doubling CTAs in either section.
       new IntersectionObserver(
-        ([entry]) => setVisible(!entry.isIntersecting),
+        ([entry]) => {
+          pastHero = !entry.isIntersecting;
+          sync();
+        },
         { threshold: 0 }
       ).observe(hero);
+
+      if (contact) {
+        new IntersectionObserver(
+          ([entry]) => {
+            inContact = entry.isIntersecting;
+            sync();
+          },
+          { threshold: 0, rootMargin: '0px 0px -12% 0px' }
+        ).observe(contact);
+      }
     } else {
-      const onScroll = () => setVisible(window.scrollY > hero.offsetHeight - 48);
+      const onScroll = () => {
+        const y = window.scrollY;
+        pastHero = y > hero.offsetHeight - 48;
+        inContact = contact
+          ? contact.getBoundingClientRect().top < window.innerHeight * 0.88
+          : false;
+        sync();
+      };
       onScroll();
       window.addEventListener('scroll', onScroll, { passive: true });
     }
