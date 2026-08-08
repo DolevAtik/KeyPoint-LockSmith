@@ -1,8 +1,6 @@
 ---
-import { Image } from 'astro:assets';
-import logoLight from '../assets/logo-light.png';
 import Icon from './Icon.astro';
-import { site, telHref, whatsappHref, navLinks, WA_DEFAULT_MESSAGE } from '../data/site';
+import { telHref, whatsappHref, navLinks, WA_DEFAULT_MESSAGE } from '../data/site';
 import { gallery } from '../data/gallery';
 
 const wa = whatsappHref(WA_DEFAULT_MESSAGE);
@@ -25,24 +23,9 @@ const mobileCols = links.length <= 4 ? 'grid-cols-4' : 'grid-cols-5';
 
 <header id="kp-header" class="sticky top-0 z-50 transition-[background-color,box-shadow,border-color] duration-300">
   <div class="border-b border-transparent bg-transparent transition-colors duration-300" data-header-surface>
-    <nav class="kp-primary-nav container-page flex h-[68px] items-center justify-between gap-4 lg:h-[80px]" aria-label="Main">
-      <a
-        href="#home"
-        class="inline-flex min-h-11 shrink-0 items-center rounded-lg"
-        aria-label={`${site.name} — back to top`}
-      >
-        <Image
-          src={logoLight}
-          alt="KeyPoint Locksmith logo"
-          width={172}
-          height={92}
-          loading="eager"
-          class="h-9 w-auto sm:h-10 lg:h-11"
-        />
-      </a>
-
+    <nav class="kp-primary-nav container-page hidden h-[72px] items-center justify-between gap-4 lg:flex" aria-label="Main">
       <!-- Desktop links -->
-      <ul class="hidden items-center gap-1 lg:flex">
+      <ul class="flex items-center gap-1">
         {
           links.map((link) => (
             <li>
@@ -59,7 +42,7 @@ const mobileCols = links.length <= 4 ? 'grid-cols-4' : 'grid-cols-5';
       </ul>
 
       <!-- Desktop actions -->
-      <div class="hidden items-center gap-2.5 lg:flex">
+      <div class="flex items-center gap-2.5">
         <a
           href={wa}
           target="_blank"
@@ -72,27 +55,12 @@ const mobileCols = links.length <= 4 ? 'grid-cols-4' : 'grid-cols-5';
         </a>
         <a href={telHref} class="btn btn-gold !min-h-[46px] !px-5" data-cta="nav-call">
           <Icon name="phone" size={18} />
-          <span class="flex flex-col items-start leading-none">
-            <span class="text-[0.6rem] font-bold tracking-[0.18em] uppercase opacity-75">Call Now</span>
-            <span class="mt-0.5 text-[0.95rem] tracking-tight">{site.phoneDisplay}</span>
-          </span>
-        </a>
-      </div>
-
-      <!-- Mobile action: navigation links sit in the row directly below. -->
-      <div class="flex items-center lg:hidden">
-        <a
-          href={telHref}
-          class="btn btn-gold !min-h-[44px] !gap-2 !px-4 !text-[0.9rem]"
-          data-cta="nav-call-mobile"
-        >
-          <Icon name="phone" size={17} />
-          <span>Call</span>
+          Call Now
         </a>
       </div>
     </nav>
 
-    <nav class:list={['kp-link-row container-page grid border-t border-white/8 lg:hidden', mobileCols]} aria-label="Mobile">
+    <nav class:list={['kp-link-row container-page grid lg:hidden', mobileCols]} aria-label="Mobile">
       {
         links.map((link) => (
           <a

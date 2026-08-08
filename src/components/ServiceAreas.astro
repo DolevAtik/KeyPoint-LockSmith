@@ -96,7 +96,7 @@ const regionsWithIndex = areaRegions.map((r) => ({
         <Icon name="chevron-down" size={17} class="ml-auto text-gold-deep" />
       </summary>
       <div
-        class="relative mt-3 overflow-hidden rounded-2xl border border-paper-line bg-paper-card shadow-lift sm:mt-0"
+        class="relative z-0 isolate mt-3 overflow-hidden rounded-2xl border border-paper-line bg-paper-card shadow-lift sm:mt-0"
       >
         <div
           id="kp-map"
@@ -499,7 +499,7 @@ const regionsWithIndex = areaRegions.map((r) => ({
                <p class="kp-popup-city">${area.city}, CA</p>
                <span class="kp-popup-label">ZIP codes</span>
                <p class="kp-popup-zips">${area.zips.join(' · ')}</p>
-               <a class="kp-popup-call" href="${telHref}">Call ${site.phoneDisplay} &rarr;</a>
+               <a class="kp-popup-call" href="${telHref}">Call Now &rarr;</a>
              </div>`,
             { closeButton: true, maxWidth: 260 }
           );

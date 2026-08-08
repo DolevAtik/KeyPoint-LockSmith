@@ -1,6 +1,8 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
 import Icon from './Icon.astro';
-import { site, telHref, whatsappHref, WA_EMERGENCY_MESSAGE } from '../data/site';
+import { telHref, whatsappHref, WA_EMERGENCY_MESSAGE } from '../data/site';
 
 const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
 
@@ -34,44 +36,36 @@ const pillars = [
       <!-- ------------------------------------------------------------ -->
       <!-- Copy + conversion                                             -->
       <!-- ------------------------------------------------------------ -->
-      <div class="max-w-2xl">
-        <p
-          class="eyebrow reveal inline-flex rounded-full border border-gold/30 bg-gold/10 px-3.5 py-1.5 text-gold"
-        >
-          <span class="relative flex h-2 w-2" aria-hidden="true">
-            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-70"></span>
-            <span class="relative inline-flex h-2 w-2 rounded-full bg-gold"></span>
-          </span>
-          <span class="sm:hidden">Emergency Locksmith</span>
-          <span class="hidden sm:inline">Emergency Locksmith · Ventura County &amp; LA</span>
-        </p>
-
-        <h1
-          class="reveal mt-4 font-display text-[2.1rem] leading-[1.05] font-extrabold tracking-tight sm:mt-5 sm:text-[3.1rem] lg:text-[3.25rem] xl:text-[4rem]"
-          style="--reveal-delay: 60ms"
-        >
-          <span class="text-gold">KeyPoint</span>
-          <span class="text-on-ink"> Locksmith</span>
+      <div class="mx-auto max-w-2xl text-center lg:mx-0 lg:text-left">
+        <h1 class="reveal flex justify-center lg:justify-start" style="--reveal-delay: 60ms">
+          <Image
+            src={logo}
+            alt="KeyPoint Locksmith"
+            width={598}
+            height={320}
+            loading="eager"
+            fetchpriority="high"
+            class="h-auto w-[min(100%,18.5rem)] sm:w-[min(100%,24rem)] lg:w-[min(100%,28rem)] xl:w-[min(100%,32rem)]"
+          />
         </h1>
 
         <p
-          class="reveal mt-4 max-w-xl text-[1.0625rem] text-on-ink-muted sm:mt-6 sm:text-lg"
+          class="reveal mx-auto mt-4 max-w-xl text-[1.0625rem] text-on-ink-muted sm:mt-6 sm:text-lg lg:mx-0"
           style="--reveal-delay: 120ms"
         >
-          Locked out, lost your keys, or need a lock changed? Call {site.owner.split(' ')[0]}
-          directly — he'll tell you what he can do and when he can be there.
+          Locked out, lost your keys, or need a lock changed? Call us
+          directly for emergency locksmith help across Ventura County and Los Angeles.
         </p>
 
         <!-- Primary conversion block -->
-        <div class="reveal mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center" style="--reveal-delay: 180ms">
+        <div class="reveal mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center sm:justify-center lg:justify-start" style="--reveal-delay: 180ms">
           <a
             href={telHref}
             class="btn btn-gold btn-lg w-full !px-3 sm:w-auto sm:!px-8"
             data-cta="hero-call"
           >
             <Icon name="phone" size={20} />
-            <span class="sm:hidden">Call {site.phoneDisplay}</span>
-            <span class="hidden sm:inline">Call Now — {site.phoneDisplay}</span>
+            Call Now
           </a>
           <a
             href={wa}
@@ -86,7 +80,7 @@ const pillars = [
         </div>
 
         <!-- Service pillars -->
-        <ul class="reveal mt-6 hidden flex-wrap gap-2 sm:mt-9 sm:flex sm:gap-2.5" style="--reveal-delay: 220ms">
+        <ul class="reveal mt-6 hidden flex-wrap justify-center gap-2 sm:mt-9 sm:flex sm:gap-2.5 lg:justify-start" style="--reveal-delay: 220ms">
           {
             pillars.map((p) => (
               <li class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 sm:px-3.5 sm:py-2.5">

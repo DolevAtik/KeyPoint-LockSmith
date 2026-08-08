@@ -1,0 +1,85 @@
+---
+import Icon from './Icon.astro';
+import { telHref, whatsappHref, WA_DEFAULT_MESSAGE } from '../data/site';
+
+const wa = whatsappHref(WA_DEFAULT_MESSAGE);
+---
+
+<div
+  id="kp-mobile-cta"
+  class="fixed inset-x-0 bottom-0 z-40 border-t border-ink-line bg-ink/95 backdrop-blur-lg lg:hidden"
+  role="group"
+  aria-label="Call or WhatsApp"
+  hidden
+>
+  <div class="flex gap-2.5 px-3 pt-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]">
+    <a
+      href={telHref}
+      class="btn btn-gold min-w-0 flex-1 !min-h-12 !px-3 !text-[0.95rem]"
+      data-cta="mobile-bar-call"
+    >
+      <Icon name="phone" size={18} />
+      Call Now
+    </a>
+    <a
+      href={wa}
+      target="_blank"
+      rel="noopener"
+      class="btn btn-ghost-dark min-w-0 flex-1 !min-h-12 !px-3 !text-[0.95rem]"
+      data-cta="mobile-bar-whatsapp"
+      aria-label="Message on WhatsApp"
+    >
+      <Icon name="whatsapp" size={18} class="text-whatsapp" />
+      WhatsApp
+    </a>
+  </div>
+</div>
+
+<style>
+  #kp-mobile-cta {
+    transform: translateY(110%);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform 0.28s var(--ease-out-soft, ease),
+      opacity 0.22s ease;
+  }
+
+  #kp-mobile-cta.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #kp-mobile-cta {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const bar = document.getElementById('kp-mobile-cta');
+  const hero = document.getElementById('home');
+
+  if (bar && hero && window.matchMedia('(max-width: 63.99rem)').matches) {
+    bar.hidden = false;
+
+    const setVisible = (show: boolean) => {
+      bar.classList.toggle('is-visible', show);
+      document.body.classList.toggle('has-mobile-cta', show);
+    };
+
+    if ('IntersectionObserver' in window) {
+      // Reveal once the hero — and its Call/WhatsApp buttons — has scrolled by.
+      new IntersectionObserver(
+        ([entry]) => setVisible(!entry.isIntersecting),
+        { threshold: 0 }
+      ).observe(hero);
+    } else {
+      const onScroll = () => setVisible(window.scrollY > hero.offsetHeight - 48);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+  }
+</script>

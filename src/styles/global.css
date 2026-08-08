@@ -57,7 +57,7 @@
   html {
     scroll-behavior: smooth;
     /* Keeps anchored section headings clear of the sticky header. */
-    scroll-padding-top: 7.5rem;
+    scroll-padding-top: 4.5rem;
     -webkit-text-size-adjust: 100%;
 
     @media (width >= 64rem) {
@@ -65,7 +65,7 @@
     }
 
     @media (orientation: landscape) and (height <= 32rem) and (width < 64rem) {
-      scroll-padding-top: 6.5rem;
+      scroll-padding-top: 4rem;
     }
   }
 
@@ -78,6 +78,15 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: clip;
+  }
+
+  /* Room for the fixed Call / WhatsApp bar once it appears past the hero. */
+  body.has-mobile-cta {
+    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px));
+
+    @media (width >= 64rem) {
+      padding-bottom: 0;
+    }
   }
 
   h1,
