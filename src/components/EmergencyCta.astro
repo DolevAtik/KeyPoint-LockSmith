@@ -6,9 +6,9 @@ const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
 ---
 
 <section
-  id="emergency"
+  id="contact"
   class="relative overflow-hidden bg-[linear-gradient(135deg,#f0cd82_0%,#d4a24c_45%,#a9761f_100%)]"
-  aria-labelledby="emergency-heading"
+  aria-labelledby="contact-heading"
 >
   <!-- Texture + oversized keyhole watermark -->
   <div class="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -37,7 +37,7 @@ const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
       </p>
 
       <h2
-        id="emergency-heading"
+        id="contact-heading"
         class="reveal mt-4 text-[1.95rem] leading-[1.06] text-on-gold sm:mt-6 sm:text-5xl lg:text-[3.4rem]"
         style="--reveal-delay: 60ms"
       >
@@ -60,7 +60,7 @@ const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
         <a
           href={telHref}
           class="btn btn-lg group w-full !min-h-[3.75rem] !px-3 bg-ink !text-[0.98rem] text-gold-bright shadow-[0_16px_40px_-14px_rgba(0,0,0,0.65)] hover:bg-[#15191f] sm:w-auto sm:!min-h-[4rem] sm:!px-8 sm:!text-[1.15rem]"
-          data-cta="emergency-call"
+          data-cta="contact-call"
         >
           <Icon name="phone" size={22} class="transition-transform duration-300 group-hover:-rotate-12" />
           <span class="tracking-tight">Call Now</span>
@@ -70,8 +70,8 @@ const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
           href={wa}
           target="_blank"
           rel="noopener"
-          class="btn btn-lg w-full !min-h-[3.75rem] border-on-gold/25 bg-on-gold/[0.07] !text-[1.05rem] text-on-gold backdrop-blur-sm hover:bg-on-gold/15 sm:w-auto sm:!min-h-[4rem]"
-          data-cta="emergency-whatsapp"
+          class="btn btn-lg w-full !min-h-[3.75rem] border-on-gold/25 bg-on-gold/[0.1] !text-[1.05rem] text-on-gold hover:bg-on-gold/15 sm:w-auto sm:!min-h-[4rem]"
+          data-cta="contact-whatsapp"
         >
           <Icon name="whatsapp" size={22} />
           WhatsApp Us

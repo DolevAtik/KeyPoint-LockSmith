@@ -176,13 +176,13 @@
       opacity 0.7s var(--ease-out-soft),
       transform 0.7s var(--ease-out-soft);
     transition-delay: var(--reveal-delay, 0ms);
-    will-change: opacity, transform;
+    /* No will-change here: promoting every reveal to a compositor layer on a
+       long landing page exhausts GPU memory on iOS Safari. */
   }
 
   .js .reveal.is-in {
     opacity: 1;
     transform: none;
-    will-change: auto;
   }
 
   /* ------------------------------------------------------------------ */
@@ -241,10 +241,16 @@
 
   /* Outline on dark surfaces */
   .btn-ghost-dark {
-    background: rgb(255 255 255 / 0.04);
+    background: rgb(255 255 255 / 0.08);
     border-color: rgb(255 255 255 / 0.16);
     color: var(--color-on-ink);
-    backdrop-filter: blur(6px);
+  }
+
+  @media (hover: hover) and (min-width: 64rem) {
+    .btn-ghost-dark {
+      background: rgb(255 255 255 / 0.04);
+      backdrop-filter: blur(6px);
+    }
   }
 
   .btn-ghost-dark:hover {

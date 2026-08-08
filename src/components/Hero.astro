@@ -14,17 +14,18 @@ const pillars = [
 ---
 
 <section id="home" class="relative overflow-hidden bg-ink">
-  <!-- Ambient light: a warm pool behind the artwork, cool depth on the left. -->
+  <!-- Ambient light via radial gradients only — CSS filter:blur on large orbs
+       has crashed Safari's content process on iPhones under memory pressure. -->
   <div class="pointer-events-none absolute inset-0" aria-hidden="true">
     <div class="grid-texture absolute inset-0 opacity-70"></div>
     <div
-      class="absolute -top-40 -right-32 h-[38rem] w-[38rem] rounded-full opacity-[0.55] blur-[120px]"
-      style="background: radial-gradient(circle, #d4a24c 0%, transparent 68%)"
+      class="absolute -top-40 -right-32 h-[38rem] w-[38rem] opacity-[0.55]"
+      style="background: radial-gradient(circle, rgb(212 162 76 / 0.55) 0%, transparent 68%)"
     >
     </div>
     <div
-      class="absolute -bottom-56 -left-40 h-[34rem] w-[34rem] rounded-full opacity-40 blur-[130px]"
-      style="background: radial-gradient(circle, #1e3a5f 0%, transparent 70%)"
+      class="absolute -bottom-56 -left-40 h-[34rem] w-[34rem] opacity-40"
+      style="background: radial-gradient(circle, rgb(30 58 95 / 0.55) 0%, transparent 70%)"
     >
     </div>
     <!-- Soft fade at the bottom edge. -->

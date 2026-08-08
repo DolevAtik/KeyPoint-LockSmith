@@ -22,8 +22,8 @@ const rows = [
 <section id="services" class="section-y relative overflow-hidden bg-ink" aria-labelledby="services-heading">
   <div class="grid-texture pointer-events-none absolute inset-0 opacity-50" aria-hidden="true"></div>
   <div
-    class="pointer-events-none absolute top-0 left-1/2 h-64 w-[46rem] -translate-x-1/2 rounded-full opacity-25 blur-[110px]"
-    style="background: radial-gradient(circle, #d4a24c 0%, transparent 70%)"
+    class="pointer-events-none absolute top-0 left-1/2 h-64 w-[46rem] -translate-x-1/2 opacity-25"
+    style="background: radial-gradient(circle, rgb(212 162 76 / 0.7) 0%, transparent 70%)"
     aria-hidden="true"
   >
   </div>
@@ -146,9 +146,8 @@ const rows = [
     margin-top: 0.75rem;
   }
 
-  /* Before the script clones the track — and for anyone without JS or with
-     reduced motion on — the rows are plain swipeable strips. Every service is
-     reachable either way. */
+  /* Before the script clones the track — and for anyone without JS — the rows
+     are plain swipeable strips. Every service is reachable either way. */
   .belt-row {
     overflow-x: auto;
     overscroll-behavior-x: contain;
@@ -168,11 +167,24 @@ const rows = [
 
   .belt[data-ready] .belt-track {
     animation: belt-left var(--belt-duration, 70s) linear infinite;
-    will-change: transform;
   }
 
   .belt[data-ready] [data-direction='right'] .belt-track {
     animation-name: belt-right;
+  }
+
+  /* Keep the service belts moving even when the OS asks for reduced motion —
+     Pause is still available for anyone who wants to stop them. */
+  @media (prefers-reduced-motion: reduce) {
+    .belt[data-ready] .belt-track {
+      animation: belt-left var(--belt-duration, 70s) linear infinite !important;
+      animation-duration: var(--belt-duration, 70s) !important;
+      animation-iteration-count: infinite !important;
+    }
+
+    .belt[data-ready] [data-direction='right'] .belt-track {
+      animation-name: belt-right !important;
+    }
   }
 
   /* Stops under the pointer, for a keyboard user tabbing in, or on demand. */
@@ -210,11 +222,7 @@ const rows = [
   const toggle = document.getElementById('belt-toggle');
   const label = toggle?.querySelector<HTMLElement>('[data-belt-label]');
 
-  // Prefer-reduced-motion keeps the static, swipeable rows. Everyone else —
-  // phones included — gets the looping belts; the Pause control covers touch.
-  const moves = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (section && belt && controls && toggle && label && moves) {
+  if (section && belt && controls && toggle && label) {
     // A second copy of each row is what makes the loop seamless: the track
     // travels exactly one copy's width and lands back where it started.
     for (const track of belt.querySelectorAll<HTMLElement>('.belt-track')) {

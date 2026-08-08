@@ -85,7 +85,9 @@ const regionsWithIndex = areaRegions.map((r) => ({
     <!-- ---------------------------------------------------------------- -->
     <!-- Map                                                               -->
     <!-- ---------------------------------------------------------------- -->
-    <details id="kp-map-disclosure" class="reveal mt-6 sm:mt-10 lg:mt-14" open>
+    <!-- Map starts closed on phones so Leaflet (tiles + ~30 markers) is not
+         fetched until the visitor asks for it. Desktop keeps it open. -->
+    <details id="kp-map-disclosure" class="reveal mt-6 sm:mt-10 lg:mt-14">
       <summary
         class="flex min-h-14 cursor-pointer list-none items-center gap-3 rounded-xl border border-paper-line bg-paper-card px-4 py-3 font-display font-bold shadow-card marker:content-none sm:hidden [&::-webkit-details-marker]:hidden"
       >
@@ -204,7 +206,10 @@ const regionsWithIndex = areaRegions.map((r) => ({
 <script>
   const mapDisclosure = document.getElementById('kp-map-disclosure') as HTMLDetailsElement | null;
   if (mapDisclosure) {
-    mapDisclosure.open = true;
+    // Desktop / large tablets: show the map by default. Phones stay collapsed
+    // until the visitor expands it (or taps "Show on map" from search).
+    const desktopMap = window.matchMedia('(min-width: 40rem)').matches;
+    mapDisclosure.open = desktopMap;
     mapDisclosure.dataset.disclosureReady = '';
   }
 </script>
@@ -228,9 +233,13 @@ const regionsWithIndex = areaRegions.map((r) => ({
     background: #eef1f5;
   }
 
-  /* Softens the raw OSM raster so it sits inside the design instead of shouting. */
-  #kp-map .leaflet-tile-pane {
-    filter: saturate(0.72) contrast(1.04) brightness(1.02);
+  /* Softens the raw OSM raster on desktop only — CSS filters on the tile
+     pane force an extra full-size offscreen bitmap and are a known Safari
+     memory spike when many tiles are visible. */
+  @media (hover: hover) and (min-width: 64rem) {
+    #kp-map .leaflet-tile-pane {
+      filter: saturate(0.72) contrast(1.04) brightness(1.02);
+    }
   }
 
   #kp-map .leaflet-popup-content-wrapper {
@@ -436,8 +445,9 @@ const regionsWithIndex = areaRegions.map((r) => ({
 
     /**
      * Leaflet is ~150 KB — far too much to spend on a visitor who only wants a
-     * phone number. It is fetched the first time the map approaches the
-     * viewport, or immediately if someone taps a city card before then.
+     * phone number. It is fetched the first time the map is visible (disclosure
+     * open + near viewport), or immediately if someone taps a city card / Show
+     * on map before then.
      */
     const boot = () => {
       if (ready) return ready;
@@ -559,20 +569,34 @@ const regionsWithIndex = areaRegions.map((r) => ({
       return ready;
     };
 
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((e) => e.isIntersecting)) {
-            io.disconnect();
-            boot();
-          }
-        },
-        { rootMargin: '300px' }
-      );
-      io.observe(container);
-    } else {
-      boot();
-    }
+    const disclosure = document.getElementById('kp-map-disclosure') as HTMLDetailsElement | null;
+    let observed = false;
+
+    const watchAndBoot = () => {
+      if (observed || ready) return;
+      if (disclosure && !disclosure.open) return;
+
+      observed = true;
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            if (entries.some((e) => e.isIntersecting)) {
+              io.disconnect();
+              boot();
+            }
+          },
+          { rootMargin: '120px' }
+        );
+        io.observe(container);
+      } else {
+        boot();
+      }
+    };
+
+    watchAndBoot();
+    disclosure?.addEventListener('toggle', () => {
+      if (disclosure.open) watchAndBoot();
+    });
 
     // City cards drive the map — open the disclosure first on phones/tablets.
     document.querySelectorAll<HTMLButtonElement>('.area-card').forEach((card) => {
