@@ -35,12 +35,12 @@ const benefits = [
 
 <section class="section-y bg-paper text-on-paper" aria-labelledby="benefits-heading">
   <div class="container-page">
-    <div class="mx-auto max-w-2xl text-center">
+    <div class="kp-benefits-head mx-auto max-w-2xl text-center lg:max-w-none">
       <p class="eyebrow reveal text-gold-deep">Why choose KeyPoint</p>
       <h2 id="benefits-heading" class="reveal mt-3 text-[1.75rem] sm:mt-4 sm:text-4xl lg:text-[2.75rem]">
         Skilled work.<br />Fair price.<br />Direct answers.
       </h2>
-      <p class="reveal mt-3 hidden text-[1.0625rem] text-on-paper-muted sm:mt-5 sm:block">
+      <p class="kp-benefits-lede reveal mt-3 hidden text-[1.0625rem] text-on-paper-muted sm:mt-5 sm:block">
         Skilled locksmith work, honest pricing, and direct answers from the person who shows up.
       </p>
     </div>
@@ -73,3 +73,15 @@ const benefits = [
     </ul>
   </div>
 </section>
+
+<style>
+  /* Desktop only: keep the lede on a single line and scale the type so it
+     never spills past the page container. Mobile/tablet layout untouched. */
+  @media (width >= 64rem) {
+    .kp-benefits-lede {
+      white-space: nowrap;
+      /* ~88ch sentence; shrink with the viewport so it stays inside container-page. */
+      font-size: clamp(0.8rem, 1.2vw + 0.35rem, 1.0625rem);
+    }
+  }
+</style>

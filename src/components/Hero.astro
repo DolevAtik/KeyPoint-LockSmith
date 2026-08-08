@@ -51,15 +51,15 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
       <!-- ------------------------------------------------------------ -->
       <div class="kp-hero-copy mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-5 text-center font-hero sm:block sm:flex-none sm:text-left lg:mx-0">
         <div class="kp-hero-brand flex flex-col items-center gap-5 sm:items-start sm:gap-0">
-          <h1 class="reveal flex justify-center sm:justify-start" style="--reveal-delay: 60ms">
+          <h1 class="kp-hero-logo-row reveal flex justify-center sm:justify-start" style="--reveal-delay: 60ms">
             <Image
               src={logo}
               alt="KeyPoint Locksmith"
-              width={598}
-              height={320}
+              width={865}
+              height={471}
               loading="eager"
               fetchpriority="high"
-              class="h-auto w-[min(100%,26rem)] lg:w-[min(100%,28rem)] xl:w-[min(100%,32rem)]"
+              class="kp-hero-logo h-auto w-[min(100%,26rem)] lg:w-[min(100%,28rem)] xl:w-[min(100%,32rem)]"
             />
           </h1>
 
@@ -136,7 +136,7 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
         </div>
 
         <div
-          class="reveal flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center sm:justify-start"
+          class="kp-hero-actions reveal flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center sm:justify-start"
           style="--reveal-delay: 180ms"
         >
           <a
@@ -160,7 +160,7 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
         </div>
 
         <!-- Service pillars -->
-        <ul class="reveal mt-6 hidden flex-wrap justify-center gap-2 sm:mt-9 sm:flex sm:gap-2.5 lg:justify-start" style="--reveal-delay: 220ms">
+        <ul class="kp-hero-pillars reveal mt-6 hidden flex-wrap justify-center gap-2 sm:mt-9 sm:flex sm:gap-2.5 lg:justify-start" style="--reveal-delay: 220ms">
           {
             pillars.map((p) => (
               <li class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 sm:px-3.5 sm:py-2.5">
@@ -176,7 +176,7 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
       <!-- Hero artwork (decorative, desktop only to keep mobile light)  -->
       <!-- ------------------------------------------------------------ -->
       <div class="relative hidden lg:block" aria-hidden="true">
-        <div class="relative mx-auto aspect-square w-full max-w-[26rem]">
+        <div class="kp-hero-art relative mx-auto aspect-square w-full max-w-[26rem]">
           <svg viewBox="0 0 400 400" class="h-full w-full" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="h-body" x1="120" y1="180" x2="280" y2="340" gradientUnits="userSpaceOnUse">
@@ -318,6 +318,64 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
     }
   }
 
+  /* Desktop: the hero has to land inside one screen below the 84px nav, so the
+     logo and the rhythm between blocks scale off the viewport height instead of
+     fixed rems. Untouched below 64rem. */
+  @media (width >= 64rem) {
+    .kp-hero {
+      min-height: calc(100svh - 84px);
+    }
+
+    .kp-hero-inner {
+      padding-block: clamp(0.75rem, 4vh, 3rem);
+    }
+
+    .kp-hero-logo-row {
+      justify-content: flex-start;
+    }
+
+    /* As wide as the column allows, but never wider than the vertical budget
+       left over by the copy, review card, buttons and pillars (the logo is
+       0.535 as tall as it is wide). */
+    .kp-hero-logo {
+      width: min(100%, clamp(10rem, calc(136vh - 640px), 40rem));
+    }
+
+    /* Break before "Emergency"; the last two lines stay on one line. */
+    .kp-hero-line:nth-child(1) {
+      display: block;
+    }
+
+    .kp-hero-line:nth-child(2)::before {
+      content: none;
+    }
+
+    .kp-hero-copy-text {
+      margin-top: clamp(0.75rem, 2.2vh, 1.5rem);
+      font-size: clamp(1rem, 1.9vh, 1.25rem);
+    }
+
+    #kp-hero-reviews {
+      margin-top: clamp(1rem, 3vh, 2rem);
+    }
+
+    .kp-hero-review-stage {
+      min-height: clamp(5.5rem, 13vh, 6.75rem);
+    }
+
+    .kp-hero-actions {
+      margin-top: clamp(1rem, 3vh, 2rem);
+    }
+
+    .kp-hero-pillars {
+      margin-top: clamp(1rem, 3vh, 2.25rem);
+    }
+
+    .kp-hero-art {
+      max-width: min(26rem, 42vh);
+    }
+  }
+
   @media (orientation: landscape) and (height <= 32rem) and (width < 64rem) {
     .kp-hero {
       min-height: auto;
@@ -426,6 +484,17 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
 </style>
 
 <script>
+  // On desktop the entire hero sits above the fold, but the shared reveal
+  // observer ignores the bottom 8% of the viewport, so the pillars would stay
+  // hidden until the visitor scrolls. Reveal the hero's own blocks on load.
+  if (window.matchMedia('(min-width: 64rem)').matches) {
+    requestAnimationFrame(() => {
+      document
+        .querySelectorAll<HTMLElement>('.kp-hero .reveal')
+        .forEach((el) => el.classList.add('is-in'));
+    });
+  }
+
   const root = document.getElementById('kp-hero-reviews');
   if (root) {
     const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-hero-review]'));

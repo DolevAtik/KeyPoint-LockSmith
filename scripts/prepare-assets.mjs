@@ -8,7 +8,7 @@
  *   src/assets/logo-light.png  transparent, reversed -> use on DARK surfaces
  *   public/favicon-*.png       square keyhole mark lifted from the logo
  *   public/apple-touch-icon.png
- *   public/og-image.jpg        1200x630 social card
+ *   public/og-image.jpg        1200x630 social card, built from `logo_new.jpeg`
  *
  * Run with: npm run assets
  */
@@ -19,6 +19,8 @@ import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(root, 'logo.jpeg');
+/** Owner-supplied wide wordmark, already reversed onto near-black. */
+const SOCIAL_SRC = path.join(root, 'logo_new.jpeg');
 const ASSETS = path.join(root, 'src', 'assets');
 const PUBLIC = path.join(root, 'public');
 
@@ -26,6 +28,9 @@ const PUBLIC = path.join(root, 'public');
 const GOLD = { r: 0xc9, g: 0x97, b: 0x3f };
 const GOLD_ON_DARK = { r: 0xe6, g: 0xb9, b: 0x5f };
 const INK = { r: 0x0b, g: 0x0d, b: 0x10 };
+/** Flat background of `logo_new.jpeg`; the OG card reuses it so the pasted
+ *  wordmark leaves no visible seam. */
+const SOCIAL_BG = { r: 0x1b, g: 0x1b, b: 0x1b };
 
 const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
 const lum = (r, g, b) => 0.299 * r + 0.587 * g + 0.114 * b;
@@ -218,48 +223,46 @@ async function main() {
   }
 
   // ---- Open Graph card ----------------------------------------------------
-  const ogMark = await fromRaw(reverse, px.w, px.h)
-    .extract(crop)
-    .resize({ width: 560 })
+  // Facebook/WhatsApp/X all crop toward 1.91:1, so the owner's wordmark is
+  // re-laid-out at that ratio instead of being handed over as-is. Its own
+  // padding is trimmed first so the mark can be sized against the card rather
+  // than against whatever margin the export happened to carry.
+  const ogMark = await sharp(SOCIAL_SRC)
+    .trim({ background: SOCIAL_BG, threshold: 14 })
+    .resize({ width: 700 })
     .png()
     .toBuffer();
   const ogMeta = await sharp(ogMark).metadata();
-  const ogMarkTop = Math.round(200 - ogMeta.height / 2);
 
+  // The wordmark carries its own gold rule under "LOCKSMITH", so the card adds
+  // no second divider — only the bottom bar that frames the crop.
   const ogBg = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
-       <defs>
-         <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
-           <stop offset="0" stop-color="#141821"/>
-           <stop offset="0.55" stop-color="#0B0D10"/>
-           <stop offset="1" stop-color="#000000"/>
-         </linearGradient>
-         <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
-           <stop offset="0" stop-color="rgb(${GOLD.r},${GOLD.g},${GOLD.b})" stop-opacity="0"/>
-           <stop offset="0.5" stop-color="rgb(${GOLD_ON_DARK.r},${GOLD_ON_DARK.g},${GOLD_ON_DARK.b})"/>
-           <stop offset="1" stop-color="rgb(${GOLD.r},${GOLD.g},${GOLD.b})" stop-opacity="0"/>
-         </linearGradient>
-       </defs>
-       <rect width="1200" height="630" fill="url(#bg)"/>
+       <rect width="1200" height="630" fill="rgb(${SOCIAL_BG.r},${SOCIAL_BG.g},${SOCIAL_BG.b})"/>
        <rect y="614" width="1200" height="16" fill="rgb(${GOLD.r},${GOLD.g},${GOLD.b})"/>
-       <rect x="300" y="392" width="600" height="3" fill="url(#rule)"/>
-       <text x="600" y="452" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif"
-             font-size="40" font-weight="700" fill="#F6F7F9" letter-spacing="1">
+       <text x="600" y="486" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif"
+             font-size="36" font-weight="700" fill="#F6F7F9" letter-spacing="1">
          Emergency Locksmith Services
        </text>
-       <text x="600" y="506" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif"
-             font-size="29" fill="#A9B1BD" letter-spacing="0.5">
+       <text x="600" y="530" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif"
+             font-size="26" fill="#A9B1BD" letter-spacing="0.5">
          Residential · Commercial · Automotive — Ventura County &amp; Los Angeles
        </text>
-       <text x="600" y="566" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif"
-             font-size="38" font-weight="700" fill="rgb(${GOLD_ON_DARK.r},${GOLD_ON_DARK.g},${GOLD_ON_DARK.b})" letter-spacing="1.5">
+       <text x="600" y="586" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif"
+             font-size="36" font-weight="700" fill="rgb(${GOLD_ON_DARK.r},${GOLD_ON_DARK.g},${GOLD_ON_DARK.b})" letter-spacing="1.5">
          +1 747-354-8313
        </text>
      </svg>`
   );
 
   await sharp(ogBg)
-    .composite([{ input: ogMark, left: Math.round((1200 - ogMeta.width) / 2), top: ogMarkTop }])
+    .composite([
+      {
+        input: ogMark,
+        left: Math.round((1200 - ogMeta.width) / 2),
+        top: Math.round(210 - ogMeta.height / 2),
+      },
+    ])
     .jpeg({ quality: 88, mozjpeg: true })
     .toFile(path.join(PUBLIC, 'og-image.jpg'));
 
