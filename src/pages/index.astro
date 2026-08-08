@@ -4,11 +4,13 @@ import Navbar from '../components/Navbar.astro';
 import Hero from '../components/Hero.astro';
 import Benefits from '../components/Benefits.astro';
 import Services from '../components/Services.astro';
+import Gallery from '../components/Gallery.astro';
 import EmergencyCta from '../components/EmergencyCta.astro';
 import ServiceAreas from '../components/ServiceAreas.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
 import MobileCtaBar from '../components/MobileCtaBar.astro';
+import { gallery } from '../data/gallery';
 ---
 
 <Base>
@@ -19,6 +21,7 @@ import MobileCtaBar from '../components/MobileCtaBar.astro';
     <MobileCtaBar />
     <Benefits />
     <Services />
+    {gallery.length > 0 && <Gallery />}
     <EmergencyCta />
     <ServiceAreas />
     <Contact />

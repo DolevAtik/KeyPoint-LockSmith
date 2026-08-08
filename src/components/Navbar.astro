@@ -3,8 +3,21 @@ import { Image } from 'astro:assets';
 import logoLight from '../assets/logo-light.png';
 import Icon from './Icon.astro';
 import { site, telHref, whatsappHref, navLinks, WA_DEFAULT_MESSAGE } from '../data/site';
+import { gallery } from '../data/gallery';
 
 const wa = whatsappHref(WA_DEFAULT_MESSAGE);
+
+/** Insert Work after Services once the gallery has real photos. */
+const links =
+  gallery.length > 0
+    ? [
+        ...navLinks.slice(0, 2),
+        { label: 'Work', href: '#work' },
+        ...navLinks.slice(2),
+      ]
+    : [...navLinks];
+
+const mobileCols = links.length <= 4 ? 'grid-cols-4' : 'grid-cols-5';
 ---
 
 {/* Watched by the script below to decide when the header turns solid. */}
@@ -31,7 +44,7 @@ const wa = whatsappHref(WA_DEFAULT_MESSAGE);
       <!-- Desktop links -->
       <ul class="hidden items-center gap-1 lg:flex">
         {
-          navLinks.map((link) => (
+          links.map((link) => (
             <li>
               <a
                 href={link.href}
@@ -79,12 +92,17 @@ const wa = whatsappHref(WA_DEFAULT_MESSAGE);
       </div>
     </nav>
 
-    <nav class="kp-link-row container-page grid grid-cols-4 border-t border-white/8 lg:hidden" aria-label="Mobile">
+    <nav class:list={['kp-link-row container-page grid border-t border-white/8 lg:hidden', mobileCols]} aria-label="Mobile">
       {
-        navLinks.map((link) => (
+        links.map((link) => (
           <a
             href={link.href}
-            class="mobile-nav-link relative flex min-h-11 items-center justify-center px-1 font-display text-[0.78rem] font-semibold text-on-ink-muted transition-colors duration-200 after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:scale-x-0 after:rounded-full after:bg-gold after:transition-transform hover:text-gold hover:after:scale-x-100 focus-visible:text-gold"
+            class:list={[
+              'mobile-nav-link relative flex min-h-11 items-center justify-center font-display font-semibold text-on-ink-muted transition-colors duration-200 after:absolute after:bottom-0 after:h-0.5 after:scale-x-0 after:rounded-full after:bg-gold after:transition-transform hover:text-gold hover:after:scale-x-100 focus-visible:text-gold',
+              links.length > 4
+                ? 'px-0.5 text-[0.72rem] after:inset-x-2 sm:text-[0.78rem]'
+                : 'px-1 text-[0.78rem] after:inset-x-3',
+            ]}
             data-nav-link={link.href}
           >
             {link.label === 'Service Areas' ? 'Areas' : link.label}
