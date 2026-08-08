@@ -311,9 +311,10 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
      only appears after a deliberate scroll. */
   @media (width < 64rem) {
     .kp-hero {
-      /* Mobile nav row is min-h-13 (3.25rem). svh avoids iOS URL-bar jumps. */
+      /* Mobile nav row is min-h-13 (3.25rem). Deliberately svh, not dvh: dvh
+         re-measures while the URL bar collapses, resizing the hero mid-scroll
+         and shunting the scroll position on every direction change. */
       min-height: calc(100svh - 3.25rem);
-      min-height: calc(100dvh - 3.25rem);
     }
   }
 

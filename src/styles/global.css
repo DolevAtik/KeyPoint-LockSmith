@@ -81,12 +81,12 @@
     overflow-x: clip;
   }
 
-  /* Room for the fixed Call / WhatsApp bar once it appears past the hero. */
-  body.has-mobile-cta {
-    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px));
-
-    @media (width >= 64rem) {
-      padding-bottom: 0;
+  /* Room for the fixed Call / WhatsApp bar. Reserved for the whole page rather
+     than toggled with the bar: changing body height mid-scroll moves the
+     scroll position and reads as a stutter when you reverse direction. */
+  @media (width < 64rem) {
+    body {
+      padding-bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px));
     }
   }
 

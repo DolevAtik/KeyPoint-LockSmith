@@ -7,7 +7,7 @@ const wa = whatsappHref(WA_DEFAULT_MESSAGE);
 
 <div
   id="kp-mobile-cta"
-  class="fixed inset-x-0 bottom-0 z-40 border-t border-ink-line bg-ink/95 backdrop-blur-lg lg:hidden"
+  class="fixed inset-x-0 bottom-0 z-40 border-t border-ink-line bg-ink lg:hidden"
   role="group"
   aria-label="Call or WhatsApp"
   hidden
@@ -70,9 +70,7 @@ const wa = whatsappHref(WA_DEFAULT_MESSAGE);
     let inContact = false;
 
     const sync = () => {
-      const show = pastHero && !inContact;
-      bar.classList.toggle('is-visible', show);
-      document.body.classList.toggle('has-mobile-cta', show);
+      bar.classList.toggle('is-visible', pastHero && !inContact);
     };
 
     if ('IntersectionObserver' in window) {

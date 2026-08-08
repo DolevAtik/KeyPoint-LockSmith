@@ -185,11 +185,19 @@ const rows = [
     .belt[data-ready] [data-direction='right'] .belt-track {
       animation-name: belt-right !important;
     }
+
+    /* The shorthand above resets play-state, so the pauses need the same
+       weight to survive it. */
+    .belt[data-belt-offscreen] .belt-track,
+    #services[data-belt-paused] .belt[data-ready] .belt-track {
+      animation-play-state: paused !important;
+    }
   }
 
   /* Stops under the pointer, for a keyboard user tabbing in, or on demand. */
   .belt[data-ready] .belt-row:hover .belt-track,
   .belt[data-ready] .belt-row:focus-within .belt-track,
+  .belt[data-belt-offscreen] .belt-track,
   #services[data-belt-paused] .belt[data-ready] .belt-track {
     animation-play-state: paused;
   }
@@ -240,5 +248,16 @@ const rows = [
       const paused = section.toggleAttribute('data-belt-paused');
       label.textContent = paused ? 'Play' : 'Pause';
     });
+
+    // Two wide tracks animating off-screen keep the compositor busy for the
+    // whole page, which shows up as scroll stutter on phones.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([entry]) => {
+          belt.toggleAttribute('data-belt-offscreen', !entry.isIntersecting);
+        },
+        { rootMargin: '200px 0px' }
+      ).observe(belt);
+    }
   }
 </script>
