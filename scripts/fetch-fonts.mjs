@@ -8,6 +8,7 @@
  *
  * Outfit -> display/headings (geometric, matches the logo wordmark)
  * Inter  -> body/UI
+ * Sora   -> hero supporting copy (tighter geometric, distinct from Inter)
  *
  * Run with: npm run fonts   (only needed when the font choice changes)
  */
@@ -25,6 +26,7 @@ const UA =
 const FAMILIES = [
   { css: 'Outfit:wght@600;700;800', file: 'outfit' },
   { css: 'Inter:wght@400;500;600;700', file: 'inter' },
+  { css: 'Sora:wght@400;500;600;700', file: 'sora' },
 ];
 
 // Latin only — this site targets the US market.

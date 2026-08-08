@@ -37,7 +37,7 @@ const pillars = [
       <!-- ------------------------------------------------------------ -->
       <!-- Copy + conversion                                             -->
       <!-- ------------------------------------------------------------ -->
-      <div class="mx-auto max-w-2xl text-center lg:mx-0 lg:text-left">
+      <div class="mx-auto max-w-2xl text-center font-hero lg:mx-0 lg:text-left">
         <h1 class="reveal flex justify-center lg:justify-start" style="--reveal-delay: 60ms">
           <Image
             src={logo}
@@ -51,18 +51,19 @@ const pillars = [
         </h1>
 
         <p
-          class="reveal mx-auto mt-4 max-w-xl text-[1.0625rem] text-on-ink-muted sm:mt-6 sm:text-lg lg:mx-0"
+          class="reveal mx-auto mt-4 max-w-xl text-[0.9rem] leading-snug font-medium tracking-[-0.025em] text-on-ink-muted sm:mt-6 sm:text-lg sm:leading-relaxed sm:tracking-[-0.015em] lg:mx-0"
           style="--reveal-delay: 120ms"
         >
-          Locked out, lost your keys, or need a lock changed? Call us
-          directly for emergency locksmith help across Ventura County and Los Angeles.
+          Locked out, lost keys, or need a lock changed?<br class="sm:hidden" />
+          {' '}Call us directly for emergency locksmith help<br class="sm:hidden" />
+          {' '}across Ventura County and Los Angeles.
         </p>
 
         <!-- Primary conversion block -->
         <div class="reveal mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center sm:justify-center lg:justify-start" style="--reveal-delay: 180ms">
           <a
             href={telHref}
-            class="btn btn-gold btn-lg w-full !px-3 sm:w-auto sm:!px-8"
+            class="btn btn-gold btn-lg w-full !px-3 font-hero sm:w-auto sm:!px-8"
             data-cta="hero-call"
           >
             <Icon name="phone" size={20} />
@@ -72,7 +73,7 @@ const pillars = [
             href={wa}
             target="_blank"
             rel="noopener"
-            class="btn btn-ghost-dark btn-lg w-full sm:w-auto"
+            class="btn btn-ghost-dark btn-lg w-full font-hero sm:w-auto"
             data-cta="hero-whatsapp"
           >
             <Icon name="whatsapp" size={20} class="text-whatsapp" />
@@ -86,7 +87,7 @@ const pillars = [
             pillars.map((p) => (
               <li class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 sm:px-3.5 sm:py-2.5">
                 <Icon name={p.icon} size={18} class="text-gold" />
-                <span class="font-display text-sm font-semibold text-on-ink">{p.label}</span>
+                <span class="text-sm font-semibold tracking-[-0.01em] text-on-ink">{p.label}</span>
               </li>
             ))
           }

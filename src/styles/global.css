@@ -39,6 +39,7 @@
   /* -- Type -------------------------------------------------------------- */
   --font-display: 'Outfit', 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-hero: 'Sora', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
   /* -- Depth ------------------------------------------------------------- */
   --shadow-card: 0 1px 2px rgb(11 13 16 / 0.06), 0 8px 24px -12px rgb(11 13 16 / 0.14);
