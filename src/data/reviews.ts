@@ -31,6 +31,8 @@ export interface Review {
   /** Whole stars, 1–5. */
   rating: number;
   review: string;
+  /** Condensed quote for tight spots (hero rotator) — must read whole, no ellipsis. */
+  short?: string;
   /** Optional — the job that was carried out. */
   service?: string;
   /** Optional — where the customer is based. */
@@ -43,6 +45,7 @@ export const reviews: Review[] = [
     rating: 5,
     review:
       'Locked myself out at night with the baby already asleep in the car. Lidor talked me through it on the phone, showed up, and had the door open without a scratch on it.',
+    short: 'Locked out at night with the baby asleep in the car. Door open, not a scratch on it.',
     service: 'Emergency Lockout',
     location: 'Thousand Oaks',
   },
@@ -51,6 +54,7 @@ export const reviews: Review[] = [
     rating: 5,
     review:
       'Lost the only key to my work van. He cut and programmed a new one on site and I was back on my route the same day. Straightforward and no runaround on the price.',
+    short: 'Lost the only key to my work van. Cut and programmed on site, back on my route.',
     service: 'Automotive Key Programming',
     location: 'Van Nuys',
   },
@@ -59,6 +63,7 @@ export const reviews: Review[] = [
     rating: 5,
     review:
       'We just closed on our house and wanted every lock changed. He rekeyed all five doors to one key and fitted a new deadbolt on the side entry. Clean work, tidy afterwards.',
+    short: 'Rekeyed all five doors of our new house to one key. Clean work and tidy afterwards.',
     service: 'Rekeying & Deadbolt Installation',
     location: 'Simi Valley',
   },
@@ -67,6 +72,7 @@ export const reviews: Review[] = [
     rating: 5,
     review:
       'Our storefront lock jammed twenty minutes before opening. He got it working, then came back to fit a proper high-security cylinder. Explained the options without upselling me.',
+    short: 'Our storefront lock jammed before opening. Working again in time, no upselling.',
     service: 'Lock Repair & High-Security Locks',
     location: 'Woodland Hills',
   },
@@ -75,6 +81,7 @@ export const reviews: Review[] = [
     rating: 5,
     review:
       'Key snapped off inside the front door and I assumed the whole lock was ruined. He extracted the broken half, cut me two new keys, and the lock works better than before.',
+    short: 'Key snapped inside the front door. He pulled it out and the lock works like new.',
     service: 'Broken Key Extraction',
     location: 'Oxnard',
   },
@@ -83,6 +90,7 @@ export const reviews: Review[] = [
     rating: 5,
     review:
       'Fitted a keypad lock at the office and set up separate codes for each of the staff. He walked the whole team through it and answered my follow-up question over WhatsApp.',
+    short: 'Keypad lock at the office with a separate code per staff member. Easy to use.',
     service: 'Smart Locks & Keyless Entry',
     location: 'Camarillo',
   },

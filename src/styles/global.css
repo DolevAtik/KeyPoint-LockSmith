@@ -58,15 +58,15 @@
   html {
     scroll-behavior: smooth;
     /* Keeps anchored section headings clear of the sticky header. */
-    scroll-padding-top: 4.5rem;
+    scroll-padding-top: 5rem;
     -webkit-text-size-adjust: 100%;
 
     @media (width >= 64rem) {
-      scroll-padding-top: 5.5rem;
+      scroll-padding-top: 6rem;
     }
 
     @media (orientation: landscape) and (height <= 32rem) and (width < 64rem) {
-      scroll-padding-top: 4rem;
+      scroll-padding-top: 4.5rem;
     }
   }
 

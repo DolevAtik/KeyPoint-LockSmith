@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
 import Icon from './Icon.astro';
 import { telHref, whatsappHref, WA_EMERGENCY_MESSAGE } from '../data/site';
+import { reviews } from '../data/reviews';
 
 const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
 
@@ -11,9 +12,20 @@ const pillars = [
   { icon: 'building', label: 'Commercial' },
   { icon: 'car', label: 'Automotive' },
 ];
+
+/** Compact quotes for the hero rotator — the `short` copy fits 2–3 lines unabridged. */
+const heroReviews = reviews.slice(0, 4).map((r) => ({
+  name: r.name,
+  rating: r.rating,
+  location: r.location,
+  review: r.short ?? r.review,
+}));
 ---
 
-<section id="home" class="relative overflow-hidden bg-ink">
+<section
+  id="home"
+  class="kp-hero relative flex flex-col overflow-hidden bg-ink"
+>
   <!-- Ambient light via radial gradients only — CSS filter:blur on large orbs
        has crashed Safari's content process on iPhones under memory pressure. -->
   <div class="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -32,51 +44,117 @@ const pillars = [
     <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-ink"></div>
   </div>
 
-  <div class="container-page relative pt-7 pb-9 sm:pt-14 sm:pb-16 lg:pt-20 lg:pb-24">
-    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] xl:gap-16">
+  <div class="kp-hero-inner container-page relative flex flex-1 flex-col pt-2 pb-4 sm:pt-14 sm:pb-16 lg:justify-center lg:pt-20 lg:pb-24">
+    <div class="kp-hero-grid grid flex-1 items-stretch lg:items-center lg:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] xl:gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
       <!-- ------------------------------------------------------------ -->
       <!-- Copy + conversion                                             -->
       <!-- ------------------------------------------------------------ -->
-      <div class="mx-auto max-w-2xl text-center font-hero lg:mx-0 lg:text-left">
-        <h1 class="reveal flex justify-center lg:justify-start" style="--reveal-delay: 60ms">
-          <Image
-            src={logo}
-            alt="KeyPoint Locksmith"
-            width={598}
-            height={320}
-            loading="eager"
-            fetchpriority="high"
-            class="h-auto w-[min(100%,18.5rem)] sm:w-[min(100%,24rem)] lg:w-[min(100%,28rem)] xl:w-[min(100%,32rem)]"
-          />
-        </h1>
+      <div class="kp-hero-copy mx-auto flex w-full max-w-2xl flex-1 flex-col justify-start gap-5 text-center font-hero sm:block sm:flex-none sm:text-left lg:mx-0">
+        <div class="kp-hero-brand flex flex-1 flex-col items-center justify-center gap-5 sm:flex-none sm:items-start sm:justify-start sm:gap-0">
+          <h1 class="reveal flex justify-center sm:justify-start" style="--reveal-delay: 60ms">
+            <Image
+              src={logo}
+              alt="KeyPoint Locksmith"
+              width={598}
+              height={320}
+              loading="eager"
+              fetchpriority="high"
+              class="h-auto w-[min(100%,26rem)] lg:w-[min(100%,28rem)] xl:w-[min(100%,32rem)]"
+            />
+          </h1>
 
-        <p
-          class="reveal mx-auto mt-4 max-w-xl text-[0.9rem] leading-snug font-medium tracking-[-0.025em] text-on-ink-muted sm:mt-6 sm:text-lg sm:leading-relaxed sm:tracking-[-0.015em] lg:mx-0"
-          style="--reveal-delay: 120ms"
+          <p
+            class="kp-hero-copy-text reveal max-w-xl font-semibold tracking-[-0.025em] text-on-ink-muted sm:mt-6 sm:max-w-none sm:text-xl sm:leading-relaxed sm:font-medium sm:tracking-[-0.015em]"
+            style="--reveal-delay: 120ms"
+          >
+            <span class="kp-hero-line">Locked out or lost your keys?</span>
+            <span class="kp-hero-line">Emergency locksmith help across</span>
+            <span class="kp-hero-line">Ventura County &amp; Los Angeles.</span>
+          </p>
+        </div>
+
+        <div
+          id="kp-hero-reviews"
+          class="reveal flex w-full max-w-md flex-none flex-col sm:mt-8 sm:max-w-lg lg:mx-0"
+          style="--reveal-delay: 150ms"
+          aria-roledescription="carousel"
+          aria-label="Customer reviews"
         >
-          Locked out, lost keys, or need a lock changed?<br class="sm:hidden" />
-          {' '}Call us directly for emergency locksmith help<br class="sm:hidden" />
-          {' '}across Ventura County and Los Angeles.
-        </p>
+          <div class="relative flex flex-none flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] px-3.5 py-3 sm:px-5 sm:py-4">
+            <div class="kp-hero-review-stage relative min-h-[6.75rem]">
+              {
+                heroReviews.map((review, i) => (
+                  <figure
+                    class:list={[
+                      'kp-hero-review absolute inset-0 flex flex-col items-center justify-center text-center sm:inset-x-0 sm:top-0 sm:bottom-auto sm:items-start sm:justify-start sm:text-left',
+                      i === 0 ? 'is-active' : '',
+                    ]}
+                    data-hero-review={i}
+                    aria-hidden={i === 0 ? 'false' : 'true'}
+                  >
+                    <div
+                      class="flex items-center gap-0.5 text-gold"
+                      role="img"
+                      aria-label={`Rated ${review.rating} out of 5`}
+                    >
+                      {Array.from({ length: 5 }).map((_, s) => (
+                        <Icon
+                          name="star"
+                          size={14}
+                          class={s < review.rating ? 'text-gold' : 'text-white/15'}
+                        />
+                      ))}
+                    </div>
+                    <blockquote class="mt-1.5 text-[0.83rem] leading-snug text-on-ink/90 sm:mt-2 sm:text-[0.95rem]">
+                      “{review.review}”
+                    </blockquote>
+                    <figcaption class="mt-2 font-display text-[0.74rem] font-bold tracking-wide text-gold sm:mt-2.5 sm:text-[0.82rem]">
+                      {review.name}
+                      {review.location && (
+                        <span class="font-sans font-medium text-on-ink-muted"> · {review.location}</span>
+                      )}
+                    </figcaption>
+                  </figure>
+                ))
+              }
+            </div>
 
-        <!-- Primary conversion block -->
-        <div class="reveal mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center sm:justify-center lg:justify-start" style="--reveal-delay: 180ms">
+            <div class="mt-2.5 flex items-center justify-center gap-1.5 sm:mt-3 sm:justify-start" role="tablist" aria-label="Review slides">
+              {
+                heroReviews.map((_, i) => (
+                  <button
+                    type="button"
+                    class:list={['kp-hero-dot', i === 0 && 'is-active']}
+                    data-hero-dot={i}
+                    aria-label={`Show review ${i + 1}`}
+                    aria-current={i === 0 ? 'true' : undefined}
+                  />
+                ))
+              }
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="reveal flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center sm:justify-start"
+          style="--reveal-delay: 180ms"
+        >
           <a
             href={telHref}
-            class="btn btn-gold btn-lg w-full !px-3 font-hero sm:w-auto sm:!px-8"
+            class="btn btn-gold btn-lg w-full !min-h-14 !px-3 !text-[1.05rem] font-hero sm:w-auto sm:!min-h-12 sm:!px-8 sm:!text-base"
             data-cta="hero-call"
           >
-            <Icon name="phone" size={20} />
+            <Icon name="phone" size={22} />
             Call Now
           </a>
           <a
             href={wa}
             target="_blank"
             rel="noopener"
-            class="btn btn-ghost-dark btn-lg w-full font-hero sm:w-auto"
+            class="btn btn-ghost-dark btn-lg w-full !min-h-14 !text-[1.05rem] font-hero sm:w-auto sm:!min-h-12 sm:!text-base"
             data-cta="hero-whatsapp"
           >
-            <Icon name="whatsapp" size={20} class="text-whatsapp" />
+            <Icon name="whatsapp" size={22} class="text-whatsapp" />
             WhatsApp Us
           </a>
         </div>
@@ -200,6 +278,102 @@ const pillars = [
 </section>
 
 <style>
+  @media (width < 40rem) {
+    .kp-hero-copy-text {
+      /* Width-derived so the three nowrap lines never run off a narrow phone. */
+      font-size: clamp(1rem, calc((100vw - 2.5rem) / 17.5), 1.5rem);
+      line-height: 1.65;
+      /* Nudged down without margin so the logo above keeps its position. */
+      position: relative;
+      top: 2.25rem;
+    }
+
+    .kp-hero-line {
+      display: block;
+      white-space: nowrap;
+    }
+
+    /* Pulled up toward the copy without margin, so the CTAs stay pinned. */
+    #kp-hero-reviews {
+      position: relative;
+      top: -2.25rem;
+    }
+  }
+
+  @media (width >= 40rem) {
+    .kp-hero-line {
+      display: inline;
+    }
+
+    .kp-hero-line + .kp-hero-line::before {
+      content: ' ';
+    }
+  }
+
+  /* Fill the first mobile screen (below the sticky nav) so the next section
+     only appears after a deliberate scroll. */
+  @media (width < 64rem) {
+    .kp-hero {
+      /* Mobile nav row is min-h-13 (3.25rem). svh avoids iOS URL-bar jumps. */
+      min-height: calc(100svh - 3.25rem);
+      min-height: calc(100dvh - 3.25rem);
+    }
+  }
+
+  @media (orientation: landscape) and (height <= 32rem) and (width < 64rem) {
+    .kp-hero {
+      min-height: auto;
+    }
+
+    .kp-hero-copy {
+      justify-content: flex-start;
+    }
+
+    #kp-hero-reviews {
+      display: none;
+    }
+  }
+
+  .kp-hero-review {
+    opacity: 0;
+    transform: translateY(0.55rem);
+    pointer-events: none;
+    transition:
+      opacity 0.45s var(--ease-out-soft, ease),
+      transform 0.45s var(--ease-out-soft, ease);
+  }
+
+  .kp-hero-review.is-active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .kp-hero-dot {
+    height: 0.4rem;
+    width: 0.4rem;
+    border-radius: 999px;
+    border: 0;
+    padding: 0;
+    background: rgb(255 255 255 / 0.22);
+    cursor: pointer;
+    transition:
+      background-color 0.25s ease,
+      width 0.25s ease;
+  }
+
+  .kp-hero-dot.is-active {
+    width: 1.05rem;
+    background: var(--color-gold);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kp-hero-review {
+      transition: none;
+      transform: none;
+    }
+  }
+
   .hero-orbit {
     transform-box: view-box;
     transform-origin: 200px 215px;
@@ -252,3 +426,54 @@ const pillars = [
     }
   }
 </style>
+
+<script>
+  const root = document.getElementById('kp-hero-reviews');
+  if (root) {
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-hero-review]'));
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-hero-dot]'));
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let index = 0;
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    const show = (next: number) => {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        const on = i === index;
+        slide.classList.toggle('is-active', on);
+        slide.setAttribute('aria-hidden', on ? 'false' : 'true');
+      });
+      dots.forEach((dot, i) => {
+        const on = i === index;
+        dot.classList.toggle('is-active', on);
+        if (on) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+      });
+    };
+
+    const start = () => {
+      if (reduceMotion || slides.length < 2) return;
+      stop();
+      timer = setInterval(() => show(index + 1), 4500);
+    };
+
+    const stop = () => {
+      if (timer) clearInterval(timer);
+      timer = undefined;
+    };
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        show(Number(dot.dataset.heroDot));
+        start();
+      });
+    });
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+    root.addEventListener('focusin', stop);
+    root.addEventListener('focusout', start);
+
+    start();
+  }
+</script>

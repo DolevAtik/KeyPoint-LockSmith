@@ -23,7 +23,7 @@ const mobileCols = links.length <= 4 ? 'grid-cols-4' : 'grid-cols-5';
 
 <header id="kp-header" class="sticky top-0 z-50 transition-[background-color,box-shadow,border-color] duration-300">
   <div class="border-b border-transparent bg-transparent transition-colors duration-300" data-header-surface>
-    <nav class="kp-primary-nav container-page hidden h-[72px] items-center justify-between gap-4 lg:flex" aria-label="Main">
+    <nav class="kp-primary-nav container-page hidden h-[84px] items-center justify-between gap-4 lg:flex" aria-label="Main">
       <!-- Desktop links -->
       <ul class="flex items-center gap-1">
         {
@@ -66,10 +66,10 @@ const mobileCols = links.length <= 4 ? 'grid-cols-4' : 'grid-cols-5';
           <a
             href={link.href}
             class:list={[
-              'mobile-nav-link relative flex min-h-11 items-center justify-center font-display font-semibold text-on-ink-muted transition-colors duration-200 after:absolute after:bottom-0 after:h-0.5 after:scale-x-0 after:rounded-full after:bg-gold after:transition-transform hover:text-gold hover:after:scale-x-100 focus-visible:text-gold',
+              'mobile-nav-link relative flex min-h-[3.25rem] items-center justify-center font-display text-[0.82rem] font-semibold text-on-ink-muted transition-colors duration-200 after:absolute after:bottom-0 after:h-0.5 after:scale-x-0 after:rounded-full after:bg-gold after:transition-transform hover:text-gold hover:after:scale-x-100 focus-visible:text-gold',
               links.length > 4
-                ? 'px-0.5 text-[0.72rem] after:inset-x-2 sm:text-[0.78rem]'
-                : 'px-1 text-[0.78rem] after:inset-x-3',
+                ? 'px-0.5 text-[0.76rem] after:inset-x-2 sm:text-[0.82rem]'
+                : 'px-1 text-[0.82rem] after:inset-x-3',
             ]}
             data-nav-link={link.href}
           >
@@ -121,11 +121,11 @@ const mobileCols = links.length <= 4 ? 'grid-cols-4' : 'grid-cols-5';
 
   @media (orientation: landscape) and (max-height: 32rem) and (max-width: 63.99rem) {
     .kp-primary-nav {
-      height: 3.5rem;
+      height: 3.75rem;
     }
 
     .kp-link-row .mobile-nav-link {
-      min-height: 2.75rem;
+      min-height: 3rem;
     }
   }
 
