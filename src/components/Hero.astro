@@ -25,12 +25,12 @@ const pillars = [
       style="background: radial-gradient(circle, #1e3a5f 0%, transparent 70%)"
     >
     </div>
-    <!-- Blends the hero into the trust strip below. -->
+    <!-- Soft fade at the bottom edge. -->
     <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-ink"></div>
   </div>
 
-  <div class="container-page relative pt-12 pb-16 sm:pt-16 lg:pt-20 lg:pb-24">
-    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16 xl:gap-20">
+  <div class="container-page relative pt-7 pb-9 sm:pt-14 sm:pb-16 lg:pt-20 lg:pb-24">
+    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] xl:gap-16">
       <!-- ------------------------------------------------------------ -->
       <!-- Copy + conversion                                             -->
       <!-- ------------------------------------------------------------ -->
@@ -42,41 +42,36 @@ const pillars = [
             <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-70"></span>
             <span class="relative inline-flex h-2 w-2 rounded-full bg-gold"></span>
           </span>
-          Emergency Locksmith · Ventura County &amp; LA
+          <span class="sm:hidden">Emergency Locksmith</span>
+          <span class="hidden sm:inline">Emergency Locksmith · Ventura County &amp; LA</span>
         </p>
 
         <h1
-          class="reveal mt-5 text-[2.35rem] leading-[1.05] text-on-ink sm:text-[3.1rem] lg:text-[3.6rem] xl:text-[4rem]"
+          class="reveal mt-4 font-display text-[2.1rem] leading-[1.05] font-extrabold tracking-tight sm:mt-5 sm:text-[3.1rem] lg:text-[3.25rem] xl:text-[4rem]"
           style="--reveal-delay: 60ms"
         >
-          Emergency Locksmith Services
-          <span class="relative inline-block text-gold">
-            You Can Trust
-            <svg
-              class="absolute -bottom-1 left-0 h-2.5 w-full text-gold/45"
-              viewBox="0 0 200 10"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path d="M2 7.5C46 3 108 2.2 198 5.4" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" />
-            </svg>
-          </span>
+          <span class="text-gold">KeyPoint</span>
+          <span class="text-on-ink"> Locksmith</span>
         </h1>
 
         <p
-          class="reveal mt-6 max-w-xl text-[1.0625rem] text-on-ink-muted sm:text-lg"
+          class="reveal mt-4 max-w-xl text-[1.0625rem] text-on-ink-muted sm:mt-6 sm:text-lg"
           style="--reveal-delay: 120ms"
         >
-          Fast, professional locksmith services for homes, businesses and vehicles throughout
-          Ventura County and the surrounding areas. Locked out, lost your keys or need a lock
-          changed? Call {site.owner.split(' ')[0]} directly.
+          Locked out, lost your keys, or need a lock changed? Call {site.owner.split(' ')[0]}
+          directly — he'll tell you what he can do and when he can be there.
         </p>
 
         <!-- Primary conversion block -->
-        <div class="reveal mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style="--reveal-delay: 180ms">
-          <a href={telHref} class="btn btn-gold btn-lg w-full sm:w-auto" data-cta="hero-call">
+        <div class="reveal mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center" style="--reveal-delay: 180ms">
+          <a
+            href={telHref}
+            class="btn btn-gold btn-lg w-full !px-3 sm:w-auto sm:!px-8"
+            data-cta="hero-call"
+          >
             <Icon name="phone" size={20} />
-            Call Now — {site.phoneDisplay}
+            <span class="sm:hidden">Call {site.phoneDisplay}</span>
+            <span class="hidden sm:inline">Call Now — {site.phoneDisplay}</span>
           </a>
           <a
             href={wa}
@@ -90,22 +85,11 @@ const pillars = [
           </a>
         </div>
 
-        <!-- The number again, as selectable text, for desktop users who dial manually -->
-        <p class="reveal mt-5 text-sm text-on-ink-muted" style="--reveal-delay: 220ms">
-          Prefer to dial?
-          <a
-            href={telHref}
-            class="ml-1 font-display text-base font-bold tracking-tight text-on-ink underline decoration-gold/50 underline-offset-4 transition-colors hover:text-gold"
-          >
-            {site.phoneDisplay}
-          </a>
-        </p>
-
         <!-- Service pillars -->
-        <ul class="reveal mt-9 flex flex-wrap gap-2.5" style="--reveal-delay: 260ms">
+        <ul class="reveal mt-6 hidden flex-wrap gap-2 sm:mt-9 sm:flex sm:gap-2.5" style="--reveal-delay: 220ms">
           {
             pillars.map((p) => (
-              <li class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2.5">
+              <li class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 sm:px-3.5 sm:py-2.5">
                 <Icon name={p.icon} size={18} class="text-gold" />
                 <span class="font-display text-sm font-semibold text-on-ink">{p.label}</span>
               </li>

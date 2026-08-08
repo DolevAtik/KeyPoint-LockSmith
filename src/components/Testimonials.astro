@@ -45,10 +45,10 @@ if (REVIEWS_ARE_PLACEHOLDER) {
   <div class="container-page relative">
     <div class="mx-auto max-w-2xl text-center">
       <p class="eyebrow reveal text-gold">Testimonials</p>
-      <h2 id="reviews-heading" class="reveal mt-4 text-3xl text-on-ink sm:text-4xl lg:text-[2.75rem]">
+      <h2 id="reviews-heading" class="reveal mt-3 text-[1.75rem] text-on-ink sm:mt-4 sm:text-4xl lg:text-[2.75rem]">
         What Our Customers Say
       </h2>
-      <p class="reveal mt-5 text-[1.0625rem] text-on-ink-muted">
+      <p class="reveal mt-3 text-[1.0625rem] text-on-ink-muted sm:mt-5">
         Locksmith work is something you only need when something has gone wrong. Here's the kind of
         help people call {site.owner.split(' ')[0]} for.
       </p>
@@ -60,7 +60,7 @@ if (REVIEWS_ARE_PLACEHOLDER) {
          Delete this block together with the flag in src/data/reviews.ts. */
       REVIEWS_ARE_PLACEHOLDER && (
         <p
-          class="reveal mx-auto mt-8 flex max-w-2xl items-start gap-3 rounded-xl border border-gold/25 bg-gold/[0.07] px-4 py-3.5 text-left text-[0.875rem] text-on-ink-muted"
+          class="reveal mx-auto mt-6 flex max-w-2xl items-start gap-3 rounded-xl border border-gold/25 bg-gold/[0.07] px-4 py-3 text-left text-[0.83rem] text-on-ink-muted sm:mt-8 sm:py-3.5 sm:text-[0.875rem]"
           role="note"
         >
           <Icon name="alert" size={17} class="mt-0.5 shrink-0 text-gold" />
@@ -76,7 +76,7 @@ if (REVIEWS_ARE_PLACEHOLDER) {
     <!-- Carousel below lg, grid at lg and above -->
     <div
       id="kp-reviews-track"
-      class="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 lg:mt-14 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:pb-0"
+      class="mt-7 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 sm:mt-10 lg:mt-14 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:pb-0"
       style="scrollbar-width: none;"
     >
       {
@@ -144,7 +144,9 @@ if (REVIEWS_ARE_PLACEHOLDER) {
       }
     </div>
 
-    <div class="reveal mt-12 flex flex-col items-center gap-4 text-center">
+    {/* Hidden on phones: the sticky bar at the bottom of the screen is already
+        offering exactly this call button. */}
+    <div class="reveal mt-8 hidden flex-col items-center gap-4 text-center sm:mt-12 sm:flex">
       <p class="text-[0.95rem] text-on-ink-muted">Had work done by KeyPoint Locksmith?</p>
       <div class="flex flex-wrap justify-center gap-3">
         {

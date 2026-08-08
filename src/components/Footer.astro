@@ -2,240 +2,91 @@
 import { Image } from 'astro:assets';
 import logoLight from '../assets/logo-light.png';
 import Icon from './Icon.astro';
-import { site, telHref, mailHref, whatsappHref, navLinks, WA_DEFAULT_MESSAGE } from '../data/site';
-import { services } from '../data/services';
-import { areaRegions } from '../data/areas';
+import { site, telHref, mailHref, whatsappHref, WA_DEFAULT_MESSAGE } from '../data/site';
 
 const wa = whatsappHref(WA_DEFAULT_MESSAGE);
 const year = new Date().getFullYear();
 
-// A representative slice — the full list lives in the sections above.
-const footerServices = services.slice(0, 10);
 ---
 
-<footer class="relative border-t border-ink-line bg-ink text-on-ink">
-  <!-- ---------------------------------------------------------------- -->
-  <!-- Closing CTA                                                       -->
-  <!-- ---------------------------------------------------------------- -->
-  <div class="border-b border-ink-line bg-ink-raised">
-    <div class="container-page py-10 lg:py-12">
-      <div class="flex flex-col items-center gap-6 text-center lg:flex-row lg:justify-between lg:text-left">
-        <div>
-          <h2 class="font-display text-2xl leading-tight font-extrabold sm:text-3xl">
-            Need a Locksmith?
-            <a href={telHref} class="text-gold transition-colors hover:text-gold-bright">
-              Call {site.phoneDisplay}
-            </a>
-          </h2>
-          <p class="mt-2 text-[0.95rem] text-on-ink-muted">
-            Homes, businesses and vehicles across Ventura County &amp; Los Angeles.
-          </p>
-        </div>
+<footer class="kp-footer border-t border-ink-line bg-ink text-on-ink">
+  <div
+    class="container-page flex flex-col gap-4 py-6 pb-[calc(1.5rem+4.75rem)] md:flex-row md:items-center md:justify-between lg:pb-6"
+  >
+    <div class="flex items-center justify-between gap-4">
+      <a
+        href="#home"
+        class="inline-flex min-h-11 shrink-0 items-center rounded-lg"
+        aria-label={`${site.name} — back to top`}
+      >
+        <Image
+          src={logoLight}
+          alt="KeyPoint Locksmith logo"
+          width={180}
+          height={96}
+          loading="lazy"
+          class="h-8 w-auto"
+        />
+      </a>
 
-        <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-          <a href={telHref} class="btn btn-gold btn-lg" data-cta="footer-call">
-            <Icon name="phone" size={19} />
-            Call Now
-          </a>
-          <a
-            href={wa}
-            target="_blank"
-            rel="noopener"
-            class="btn btn-ghost-dark btn-lg"
-            data-cta="footer-whatsapp"
-          >
-            <Icon name="whatsapp" size={19} class="text-whatsapp" />
-            WhatsApp Us
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ---------------------------------------------------------------- -->
-  <!-- Link columns                                                      -->
-  <!-- ---------------------------------------------------------------- -->
-  <div class="container-page py-12 lg:py-16">
-    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.1fr] lg:gap-8">
-      <!-- Brand -->
-      <div>
-        <a href="#home" class="inline-block rounded-lg" aria-label={`${site.name} — back to top`}>
-          <Image
-            src={logoLight}
-            alt="KeyPoint Locksmith logo"
-            width={224}
-            height={120}
-            loading="lazy"
-            class="h-12 w-auto"
-          />
+      <div class="flex gap-2 lg:hidden">
+        <a
+          href={wa}
+          target="_blank"
+          rel="noopener"
+          class="grid h-11 w-11 place-items-center rounded-xl border border-white/12 text-whatsapp"
+          aria-label="Message us on WhatsApp"
+          data-cta="footer-whatsapp"
+        >
+          <Icon name="whatsapp" size={18} />
         </a>
-        <p class="mt-5 max-w-sm text-[0.92rem] leading-relaxed text-on-ink-muted">
-          {site.name} is a mobile locksmith service run by {site.owner}, covering residential,
-          commercial and automotive lock and key work throughout Ventura County, the San Fernando
-          Valley and the greater Los Angeles area.
-        </p>
-
-        <div class="mt-6 flex gap-2.5">
-          <a
-            href={telHref}
-            class="grid h-11 w-11 place-items-center rounded-xl border border-white/12 bg-white/[0.04] text-gold transition-colors duration-200 hover:border-gold/50 hover:bg-gold hover:text-on-gold"
-            aria-label={`Call ${site.phoneDisplay}`}
-          >
-            <Icon name="phone" size={18} />
-          </a>
-          <a
-            href={wa}
-            target="_blank"
-            rel="noopener"
-            class="grid h-11 w-11 place-items-center rounded-xl border border-white/12 bg-white/[0.04] text-whatsapp transition-colors duration-200 hover:border-whatsapp/60 hover:bg-whatsapp hover:text-[#05271a]"
-            aria-label="Message us on WhatsApp"
-          >
-            <Icon name="whatsapp" size={18} />
-          </a>
-          <a
-            href={mailHref}
-            class="grid h-11 w-11 place-items-center rounded-xl border border-white/12 bg-white/[0.04] text-gold transition-colors duration-200 hover:border-gold/50 hover:bg-gold hover:text-on-gold"
-            aria-label={`Email ${site.email}`}
-          >
-            <Icon name="mail" size={18} />
-          </a>
-          {
-            site.instagram && (
-              <a
-                href={site.instagram}
-                target="_blank"
-                rel="noopener"
-                class="grid h-11 w-11 place-items-center rounded-xl border border-white/12 bg-white/[0.04] text-gold transition-colors duration-200 hover:border-gold/50 hover:bg-gold hover:text-on-gold"
-                aria-label="KeyPoint Locksmith on Instagram"
-              >
-                <Icon name="instagram" size={18} />
-              </a>
-            )
-          }
-        </div>
-      </div>
-
-      <!-- Services -->
-      <nav aria-labelledby="footer-services">
-        <h3 id="footer-services" class="font-display text-[0.78rem] font-bold tracking-[0.16em] text-gold uppercase">
-          Services
-        </h3>
-        <ul class="mt-5 space-y-2.5">
-          {
-            footerServices.map((service) => (
-              <li>
-                <a
-                  href="#services"
-                  class="text-[0.92rem] text-on-ink-muted transition-colors duration-200 hover:text-gold"
-                >
-                  {service.name}
-                </a>
-              </li>
-            ))
-          }
-          <li>
-            <a href="#services" class="text-[0.92rem] font-semibold text-on-ink transition-colors duration-200 hover:text-gold">
-              All services →
-            </a>
-          </li>
-        </ul>
-      </nav>
-
-      <!-- Service areas -->
-      <nav aria-labelledby="footer-areas">
-        <h3 id="footer-areas" class="font-display text-[0.78rem] font-bold tracking-[0.16em] text-gold uppercase">
-          Service Areas
-        </h3>
-        <ul class="mt-5 space-y-2.5">
-          {
-            areaRegions.flatMap((region) => region.cities).slice(0, 10).map((city) => (
-              <li>
-                <a
-                  href="#service-areas"
-                  class="text-[0.92rem] text-on-ink-muted transition-colors duration-200 hover:text-gold"
-                >
-                  Locksmith in {city.city}
-                </a>
-              </li>
-            ))
-          }
-          <li>
-            <a href="#service-areas" class="text-[0.92rem] font-semibold text-on-ink transition-colors duration-200 hover:text-gold">
-              All service areas →
-            </a>
-          </li>
-        </ul>
-      </nav>
-
-      <!-- Contact -->
-      <div>
-        <h3 class="font-display text-[0.78rem] font-bold tracking-[0.16em] text-gold uppercase">Contact</h3>
-
-        <ul class="mt-5 space-y-4">
-          <li>
-            <span class="block text-[0.78rem] text-on-ink-muted">Phone</span>
-            <a
-              href={telHref}
-              class="font-display text-[1.05rem] font-bold text-on-ink transition-colors duration-200 hover:text-gold"
-            >
-              {site.phoneDisplay}
-            </a>
-          </li>
-          <li>
-            <span class="block text-[0.78rem] text-on-ink-muted">WhatsApp</span>
-            <a
-              href={wa}
-              target="_blank"
-              rel="noopener"
-              class="font-display text-[1.05rem] font-bold text-on-ink transition-colors duration-200 hover:text-gold"
-            >
-              {site.phoneDisplay}
-            </a>
-          </li>
-          <li>
-            <span class="block text-[0.78rem] text-on-ink-muted">Email</span>
-            <a
-              href={mailHref}
-              class="font-display text-[0.98rem] font-bold break-all text-on-ink transition-colors duration-200 hover:text-gold"
-            >
-              {site.email}
-            </a>
-          </li>
-        </ul>
-
-        <nav aria-label="Footer" class="mt-7 border-t border-ink-line pt-5">
-          <ul class="flex flex-wrap gap-x-5 gap-y-2">
-            {
-              navLinks.map((link) => (
-                <li>
-                  <a
-                    href={link.href}
-                    class="text-[0.88rem] text-on-ink-muted transition-colors duration-200 hover:text-gold"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </nav>
+        <a
+          href={mailHref}
+          class="grid h-11 w-11 place-items-center rounded-xl border border-white/12 text-gold"
+          aria-label={`Email ${site.email}`}
+        >
+          <Icon name="mail" size={18} />
+        </a>
       </div>
     </div>
-  </div>
 
-  <!-- ---------------------------------------------------------------- -->
-  <!-- Legal line — extra bottom padding clears the sticky mobile bar    -->
-  <!-- ---------------------------------------------------------------- -->
-  <div class="border-t border-ink-line">
-    <div
-      class="container-page flex flex-col items-center justify-between gap-3 py-6 pb-[calc(1.5rem+4.75rem)] text-center sm:flex-row sm:text-left lg:pb-6"
-    >
-      <p class="text-[0.85rem] text-on-ink-muted">
-        &copy; {year} {site.name}. All rights reserved.
-      </p>
-      <p class="text-[0.85rem] text-on-ink-muted">
-        Mobile locksmith service · Ventura County &amp; Los Angeles, California
-      </p>
+    <div class="flex flex-col gap-2 border-t border-ink-line pt-4 lg:flex-row lg:items-center lg:gap-5 lg:border-0 lg:pt-0">
+      <a
+        href={telHref}
+        class="inline-flex min-h-11 items-center font-display font-bold tracking-tight text-gold transition-colors hover:text-gold-bright"
+        data-cta="footer-call"
+      >
+        {site.phoneDisplay}
+      </a>
+      <p class="text-[0.8rem] text-on-ink-muted">&copy; {year} {site.name}. All rights reserved.</p>
+
+      <div class="hidden gap-2 lg:flex">
+        <a
+          href={wa}
+          target="_blank"
+          rel="noopener"
+          class="grid h-11 w-11 place-items-center rounded-xl border border-white/12 text-whatsapp"
+          aria-label="Message us on WhatsApp"
+          data-cta="footer-whatsapp"
+        >
+          <Icon name="whatsapp" size={18} />
+        </a>
+        <a
+          href={mailHref}
+          class="grid h-11 w-11 place-items-center rounded-xl border border-white/12 text-gold"
+          aria-label={`Email ${site.email}`}
+        >
+          <Icon name="mail" size={18} />
+        </a>
+      </div>
     </div>
   </div>
 </footer>
+
+<style>
+  @media (orientation: landscape) and (max-height: 32rem) and (max-width: 63.99rem) {
+    .kp-footer > div {
+      padding-bottom: 1.5rem;
+    }
+  }
+</style>

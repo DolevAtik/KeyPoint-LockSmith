@@ -9,7 +9,7 @@
  */
 
 /** Glyphs drawn as solid shapes rather than strokes. */
-export const FILLED_ICONS = new Set(['star', 'whatsapp']);
+export const FILLED_ICONS = new Set(['star', 'whatsapp', 'pause', 'play']);
 
 export const iconPaths: Record<string, string> = {
   // ---- Services -----------------------------------------------------------
@@ -59,6 +59,8 @@ export const iconPaths: Record<string, string> = {
   menu: `<path d="M3.5 7h17"/><path d="M3.5 12h17"/><path d="M3.5 17h17"/>`,
   close: `<path d="M18.5 5.5 5.5 18.5"/><path d="m5.5 5.5 13 13"/>`,
   plus: `<path d="M12 5v14"/><path d="M5 12h14"/>`,
+  pause: `<rect x="6.5" y="4.5" width="4" height="15" rx="1.3"/><rect x="13.5" y="4.5" width="4" height="15" rx="1.3"/>`,
+  play: `<path d="M7.5 5.1a1 1 0 0 1 1.5-.87l10 6.9a1 1 0 0 1 0 1.74l-10 6.9a1 1 0 0 1-1.5-.87z"/>`,
 };
 
 export const iconNames = Object.keys(iconPaths);

@@ -19,27 +19,88 @@ const regionsWithIndex = areaRegions.map((r) => ({
   <div class="container-page">
     <!-- Intro -->
     <div class="mx-auto max-w-3xl text-center">
-      <p class="eyebrow reveal text-gold-deep">Where we work</p>
-      <h2 id="areas-heading" class="reveal mt-4 text-3xl sm:text-4xl lg:text-[2.75rem]">
-        Locksmith Services Throughout Ventura County &amp; Los Angeles
+      <p class="eyebrow reveal text-gold-deep">Where KeyPoint works</p>
+      <h2 id="areas-heading" class="reveal mt-3 text-[1.75rem] sm:mt-4 sm:text-4xl lg:text-[2.75rem]">
+        <span class="sm:hidden">Across Ventura County &amp; LA</span>
+        <span class="hidden sm:inline">Across Ventura County &amp; Los Angeles</span>
       </h2>
-      <p class="reveal mt-5 text-[1.0625rem] text-on-paper-muted">
-        {site.name} provides locksmith services across Ventura, Oxnard, Camarillo, Simi Valley,
-        Thousand Oaks and Westlake Village, as well as selected areas throughout the San Fernando
-        Valley and the greater Los Angeles area — {areaCount} communities in total.
+      <p class="reveal mt-3 text-[1.0625rem] text-on-paper-muted sm:mt-5">
+        <span class="sm:hidden">Search your city or ZIP code to quickly confirm coverage.</span>
+        <span class="hidden sm:inline">
+          {site.name} covers Ventura, Oxnard, Camarillo, Simi Valley, Thousand Oaks and Westlake
+          Village, plus the San Fernando Valley and greater Los Angeles — {areaCount} communities
+          in total.
+        </span>
       </p>
+    </div>
+
+    <!-- Coverage lookup is the primary mobile task; the full map and browseable
+         region list remain available below for visitors who prefer them. -->
+    <div class="reveal mx-auto mt-6 max-w-2xl rounded-2xl border border-paper-line bg-paper-card p-4 shadow-card sm:mt-9 sm:p-5">
+      <form id="kp-area-search" role="search">
+        <label for="kp-area-query" class="font-display text-sm font-bold text-on-paper">
+          Check your service area
+        </label>
+        <div class="mt-2 flex flex-col gap-2 sm:flex-row">
+          <input
+            id="kp-area-query"
+            type="search"
+            inputmode="search"
+            autocomplete="postal-code"
+            list="kp-area-suggestions"
+            placeholder="City or ZIP code"
+            class="min-h-12 min-w-0 flex-1 rounded-xl border border-paper-line bg-paper px-4 text-base text-on-paper outline-none transition-[border-color,box-shadow,background-color] duration-200 placeholder:text-on-paper-muted/75 focus:border-gold focus:bg-paper-card focus:shadow-[0_0_0_4px_rgb(212_162_76_/_0.16)]"
+          />
+          <datalist id="kp-area-suggestions">
+            {allAreas.map((area) => <option value={area.city}>{area.zips.join(' · ')}</option>)}
+          </datalist>
+          <button type="submit" class="btn btn-gold min-h-12 sm:px-6">
+            Check coverage
+          </button>
+        </div>
+      </form>
+
+      <div
+        id="kp-area-result"
+        class="mt-3 rounded-xl border border-paper-line bg-paper px-4 py-3"
+        role="status"
+        aria-live="polite"
+        hidden
+      >
+        <p class="font-display font-bold text-on-paper" data-area-result-title></p>
+        <p class="mt-1 text-sm text-on-paper-muted" data-area-result-detail></p>
+        <div class="mt-3 flex flex-wrap gap-2" data-area-result-actions hidden>
+          <a href={telHref} class="btn btn-gold !min-h-11 !px-4 !text-sm" data-cta="area-search-call">
+            <Icon name="phone" size={17} />
+            Call for service
+          </a>
+          <button type="button" id="kp-area-show-map" class="btn btn-ghost-light !min-h-11 !px-4 !text-sm">
+            <Icon name="map-pin" size={17} />
+            Show on map
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- ---------------------------------------------------------------- -->
     <!-- Map                                                               -->
     <!-- ---------------------------------------------------------------- -->
-    <div class="reveal mt-10 lg:mt-14">
+    <details id="kp-map-disclosure" class="reveal mt-6 sm:mt-10 lg:mt-14" open>
+      <summary
+        class="flex min-h-14 cursor-pointer list-none items-center gap-3 rounded-xl border border-paper-line bg-paper-card px-4 py-3 font-display font-bold shadow-card marker:content-none sm:hidden [&::-webkit-details-marker]:hidden"
+      >
+        <span class="grid h-9 w-9 place-items-center rounded-xl bg-ink text-gold">
+          <Icon name="map-pin" size={18} />
+        </span>
+        Explore the service area map
+        <Icon name="chevron-down" size={17} class="ml-auto text-gold-deep" />
+      </summary>
       <div
-        class="relative overflow-hidden rounded-2xl border border-paper-line bg-paper-card shadow-lift"
+        class="relative mt-3 overflow-hidden rounded-2xl border border-paper-line bg-paper-card shadow-lift sm:mt-0"
       >
         <div
           id="kp-map"
-          class="h-[340px] w-full sm:h-[440px] lg:h-[520px]"
+          class="h-[220px] w-full md:h-[360px] lg:h-[480px]"
           role="application"
           aria-label={`Map of the ${areaCount} cities served by ${site.name}`}
         >
@@ -75,114 +136,101 @@ const regionsWithIndex = areaRegions.map((r) => ({
           </span>
         </button>
 
-        <div class="flex flex-wrap items-center justify-between gap-3 border-t border-paper-line px-4 py-3">
-          <p class="flex items-center gap-2 text-[0.8rem] text-on-paper-muted">
+        <div class="flex items-center justify-end gap-3 border-t border-paper-line px-3 py-2.5 sm:justify-between sm:px-4 sm:py-3">
+          <p class="hidden items-center gap-2 text-[0.8rem] text-on-paper-muted sm:flex">
             <Icon name="map-pin" size={15} class="text-gold-deep" />
             Select a marker or a city below to see its ZIP codes.
           </p>
           <button
             type="button"
             id="kp-map-reset"
-            class="rounded-lg border border-paper-line px-3 py-2 font-display text-[0.8rem] font-semibold text-on-paper transition-colors duration-200 hover:border-gold hover:text-gold-deep"
+            class="min-h-11 rounded-lg border border-paper-line px-3 py-2 font-display text-[0.8rem] font-semibold text-on-paper transition-colors duration-200 hover:border-gold hover:text-gold-deep"
           >
             Show all areas
           </button>
         </div>
       </div>
-    </div>
+    </details>
 
     <!-- ---------------------------------------------------------------- -->
     <!-- Area list — the readable, crawlable source of truth               -->
     <!-- ---------------------------------------------------------------- -->
-    <div class="mt-12 space-y-10 lg:mt-16 lg:space-y-12">
+    {/* Regions stay folded until requested, keeping the full location list
+        available without turning the section into a wall of city names. */}
+    <div id="kp-regions" class="mt-8 space-y-4 sm:mt-12 sm:space-y-10 lg:mt-16 lg:space-y-12">
       {
         regionsWithIndex.map((region) => (
-          <div class="reveal">
-            <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-paper-line pb-4">
-              <h3 class="font-display text-xl font-bold text-on-paper sm:text-2xl">{region.region}</h3>
-              <p class="text-[0.9rem] text-on-paper-muted">{region.blurb}</p>
-              <span class="ml-auto font-display text-[0.75rem] font-bold tracking-[0.14em] text-on-paper-muted uppercase">
+          <details class="kp-region reveal group">
+            <summary class="flex min-h-12 cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-1 border-b border-paper-line py-2 marker:content-none sm:py-3 [&::-webkit-details-marker]:hidden">
+              <h3 class="font-display text-lg font-bold text-on-paper sm:text-2xl">{region.region}</h3>
+              <p class="hidden text-[0.9rem] text-on-paper-muted sm:block">{region.blurb}</p>
+              <span class="ml-auto flex items-center gap-2 font-display text-[0.72rem] font-bold tracking-[0.14em] text-on-paper-muted uppercase sm:text-[0.75rem]">
                 {region.cities.length} cities
+                <Icon
+                  name="chevron-down"
+                  size={16}
+                  class="text-gold-deep transition-transform duration-200 group-open:rotate-180"
+                />
               </span>
-            </div>
+            </summary>
 
-            <ul class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <ul class="mt-3 grid grid-cols-1 gap-2 min-[23rem]:grid-cols-2 sm:mt-5 sm:gap-3 lg:grid-cols-3 xl:grid-cols-4">
               {region.cities.map((city) => (
                 <li>
                   <button
                     type="button"
-                    class="area-card group flex w-full flex-col items-start rounded-xl border border-paper-line bg-paper-card p-4 text-left transition-[transform,border-color,box-shadow] duration-250 hover:-translate-y-0.5 hover:border-gold hover:shadow-card"
+                    class="area-card group flex min-h-12 w-full flex-col items-start justify-center rounded-xl border border-paper-line bg-paper-card px-3 py-2.5 text-left transition-[transform,border-color,box-shadow] duration-250 hover:border-gold hover:shadow-card sm:h-full sm:p-4 sm:hover:-translate-y-0.5"
                     data-city-index={city.index}
                   >
-                    <span class="flex w-full items-center gap-2">
+                    <span class="flex w-full items-center gap-1.5 sm:gap-2">
                       <Icon
                         name="map-pin"
-                        size={16}
+                        size={15}
                         class="shrink-0 text-gold-deep transition-transform duration-250 group-hover:scale-110"
                       />
-                      <span class="font-display text-[0.98rem] font-bold text-on-paper">
+                      <span class="font-display text-[0.88rem] leading-tight font-bold text-on-paper sm:text-[0.98rem]">
                         {city.city}
                       </span>
                     </span>
-                    <span class="mt-1.5 text-[0.82rem] leading-relaxed text-on-paper-muted">
+                    {/* Clamped on a phone so a six-ZIP city cannot set the row
+                        height for its whole line. The map popup lists them all. */}
+                    <span class="mt-1 hidden text-[0.75rem] leading-relaxed text-on-paper-muted sm:mt-1.5 sm:block sm:text-[0.82rem]">
                       {city.zips.join(' · ')}
                     </span>
                   </button>
                 </li>
               ))}
             </ul>
-          </div>
+          </details>
         ))
       }
-    </div>
-
-    <!-- ---------------------------------------------------------------- -->
-    <!-- Local SEO copy                                                    -->
-    <!-- ---------------------------------------------------------------- -->
-    <div class="reveal mt-14 grid gap-8 rounded-2xl border border-paper-line bg-paper-card p-6 shadow-card sm:p-8 lg:mt-20 lg:grid-cols-[1.4fr_1fr] lg:gap-12 lg:p-10">
-      <div>
-        <h3 class="font-display text-xl font-bold sm:text-2xl">Local locksmith, local knowledge</h3>
-        <div class="mt-4 space-y-4 text-[0.98rem] text-on-paper-muted">
-          <p>
-            Ventura County covers a lot of ground, and the kind of locksmith work that comes up in
-            a 1920s bungalow in downtown Ventura is rarely the same as what a new build in
-            Camarillo or a storefront in Simi Valley needs. Knowing the area means turning up with
-            the right hardware the first time.
-          </p>
-          <p>
-            Coverage runs from the coast at Ventura, Oxnard and Port Hueneme, inland through Santa
-            Paula, Camarillo and Moorpark, along the 101 corridor through Thousand Oaks, Westlake
-            Village, Agoura Hills and Calabasas, and across the San Fernando Valley — Woodland
-            Hills, Northridge, Van Nuys, Sherman Oaks, Encino and neighbouring communities —
-            through to Santa Clarita and Burbank.
-          </p>
-          <p>
-            Not sure whether your street falls inside the service area? Give the ZIP code over the
-            phone and you'll get a straight yes or no.
-          </p>
-        </div>
-      </div>
-
-      <div class="flex flex-col justify-center rounded-xl border border-paper-line bg-paper p-6">
-        <p class="font-display text-[0.72rem] font-bold tracking-[0.16em] text-on-paper-muted uppercase">
-          Check your area
-        </p>
-        <p class="mt-3 font-display text-lg leading-snug font-bold text-on-paper">
-          Tell us your ZIP code and we'll confirm coverage.
-        </p>
-        <a href={telHref} class="btn btn-gold mt-5 w-full" data-cta="areas-call">
-          <Icon name="phone" size={18} />
-          {site.phoneDisplay}
-        </a>
-        <a href="#contact" class="btn btn-ghost-light mt-2.5 w-full"> Send a message instead </a>
-      </div>
     </div>
   </div>
 </section>
 
 <script type="application/json" id="kp-areas-data" set:html={JSON.stringify(mapPayload)} />
 
+<script>
+  const mapDisclosure = document.getElementById('kp-map-disclosure') as HTMLDetailsElement | null;
+  if (mapDisclosure) {
+    mapDisclosure.open = true;
+    mapDisclosure.dataset.disclosureReady = '';
+  }
+</script>
+
 <style is:global>
+  @media (orientation: landscape) and (height <= 32rem) and (width < 64rem) {
+    #kp-map {
+      height: 15rem;
+    }
+  }
+
+  .area-card.is-selected {
+    border-color: var(--color-gold);
+    background: #fffaf0;
+    box-shadow: 0 0 0 3px rgb(212 162 76 / 0.16);
+  }
+
   /* Leaflet chrome, restyled to match the site rather than the library default. */
   #kp-map .leaflet-container {
     font-family: var(--font-sans);
@@ -304,6 +352,7 @@ const regionsWithIndex = areaRegions.map((r) => ({
   // make Astro hoist it into a render-blocking <link> in <head>, which defeats
   // the point of lazy-loading the map.
   import leafletCssUrl from 'leaflet/dist/leaflet.css?url';
+  import { site, telHref } from '../data/site';
 
   interface Area {
     i: number;
@@ -316,11 +365,93 @@ const regionsWithIndex = areaRegions.map((r) => ({
   const container = document.getElementById('kp-map');
   const dataEl = document.getElementById('kp-areas-data');
 
+  const ensureMapOpen = () => {
+    const disclosure = document.getElementById('kp-map-disclosure') as HTMLDetailsElement | null;
+    if (disclosure) disclosure.open = true;
+  };
+
   if (container && dataEl?.textContent) {
     const areas: Area[] = JSON.parse(dataEl.textContent);
     let ready: Promise<void> | null = null;
     let focusCity: ((index: number) => void) | null = null;
     let queued: number | null = null;
+    let selectedAreaIndex: number | null = null;
+
+    const searchForm = document.getElementById('kp-area-search') as HTMLFormElement | null;
+    const searchInput = document.getElementById('kp-area-query') as HTMLInputElement | null;
+    const searchResult = document.getElementById('kp-area-result');
+    const resultTitle = searchResult?.querySelector<HTMLElement>('[data-area-result-title]');
+    const resultDetail = searchResult?.querySelector<HTMLElement>('[data-area-result-detail]');
+    const resultActions = searchResult?.querySelector<HTMLElement>('[data-area-result-actions]');
+    const showMapButton = document.getElementById('kp-area-show-map') as HTMLButtonElement | null;
+
+    const highlightArea = (index: number) => {
+      document.querySelectorAll<HTMLElement>('.area-card.is-selected').forEach((card) => {
+        card.classList.remove('is-selected');
+      });
+
+      const card = document.querySelector<HTMLElement>(`.area-card[data-city-index="${index}"]`);
+      card?.classList.add('is-selected');
+      const region = card?.closest<HTMLDetailsElement>('.kp-region');
+      if (region) region.open = true;
+    };
+
+    const showSearchResult = (area: Area | null, query: string) => {
+      if (!searchResult || !resultTitle || !resultDetail || !resultActions) return;
+      searchResult.hidden = false;
+
+      if (!area) {
+        selectedAreaIndex = null;
+        resultTitle.textContent = `We couldn't find “${query}” in the listed areas.`;
+        resultDetail.textContent = 'Call with your location and we will confirm whether service is available.';
+        resultActions.hidden = false;
+        if (showMapButton) showMapButton.hidden = true;
+        return;
+      }
+
+      selectedAreaIndex = area.i;
+      resultTitle.textContent = `Yes — ${area.city} is in the service area.`;
+      resultDetail.textContent = `Covered ZIP codes: ${area.zips.join(' · ')}`;
+      resultActions.hidden = false;
+      if (showMapButton) showMapButton.hidden = false;
+      highlightArea(area.i);
+    };
+
+    searchForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const rawQuery = searchInput?.value.trim() ?? '';
+      if (!rawQuery) {
+        searchInput?.focus();
+        return;
+      }
+
+      const query = rawQuery.toLowerCase();
+      const digits = rawQuery.replace(/\D/g, '');
+      const exact = areas.find(
+        (area) =>
+          area.city.toLowerCase() === query ||
+          (digits.length >= 5 && area.zips.some((zip) => zip === digits))
+      );
+      const partial =
+        exact ??
+        areas.find(
+          (area) =>
+            area.city.toLowerCase().includes(query) ||
+            (digits.length >= 3 && area.zips.some((zip) => zip.startsWith(digits)))
+        );
+
+      showSearchResult(partial ?? null, rawQuery);
+    });
+
+    showMapButton?.addEventListener('click', () => {
+      if (selectedAreaIndex === null) return;
+      ensureMapOpen();
+      requestAnimationFrame(() => {
+        document
+          .querySelector<HTMLButtonElement>(`.area-card[data-city-index="${selectedAreaIndex}"]`)
+          ?.click();
+      });
+    });
 
     /**
      * Leaflet is ~150 KB — far too much to spend on a visitor who only wants a
@@ -388,7 +519,7 @@ const regionsWithIndex = areaRegions.map((r) => ({
                <p class="kp-popup-city">${area.city}, CA</p>
                <span class="kp-popup-label">ZIP codes</span>
                <p class="kp-popup-zips">${area.zips.join(' · ')}</p>
-               <a class="kp-popup-call" href="tel:+17473548313">Call +1 747-354-8313 &rarr;</a>
+               <a class="kp-popup-call" href="${telHref}">Call ${site.phoneDisplay} &rarr;</a>
              </div>`,
             { closeButton: true, maxWidth: 260 }
           );
@@ -397,7 +528,10 @@ const regionsWithIndex = areaRegions.map((r) => ({
         });
 
         const bounds = L.latLngBounds(areas.map((a) => [a.lat, a.lng] as [number, number]));
-        const fitAll = () => map.fitBounds(bounds, { padding: [42, 42] });
+        const fitAll = () => {
+          map.fitBounds(bounds, { padding: [42, 42] });
+          map.setZoom(map.getZoom() + 1);
+        };
         fitAll();
 
         // Wheel zoom only after a deliberate click, disabled again on leaving.
@@ -432,6 +566,8 @@ const regionsWithIndex = areaRegions.map((r) => ({
 
           map.dragging.enable();
           document.getElementById('kp-map-shield')?.classList.remove('is-armed');
+          // Re-measure after the disclosure opens / was display:none.
+          map.invalidateSize();
           map.flyTo([area.lat, area.lng], 12, { duration: 0.7 });
           marker.openPopup();
         };
@@ -463,20 +599,23 @@ const regionsWithIndex = areaRegions.map((r) => ({
       boot();
     }
 
-    // City cards drive the map.
+    // City cards drive the map — open the disclosure first on phones/tablets.
     document.querySelectorAll<HTMLButtonElement>('.area-card').forEach((card) => {
       card.addEventListener('click', () => {
         const index = Number(card.dataset.cityIndex);
         if (Number.isNaN(index)) return;
 
+        ensureMapOpen();
         container.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-        if (focusCity) {
-          focusCity(index);
-        } else {
-          queued = index;
-          boot();
-        }
+        requestAnimationFrame(() => {
+          if (focusCity) {
+            focusCity(index);
+          } else {
+            queued = index;
+            boot();
+          }
+        });
       });
     });
   }

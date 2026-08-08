@@ -1,27 +1,34 @@
 ---
 import Icon from './Icon.astro';
-import { areaCount } from '../data/areas';
 
+/**
+ * Bodies are kept short on purpose: these sit two-up on a phone, where a column
+ * is about 165px wide and every extra clause turns into another two lines. The
+ * titles carry the point; the body only has to finish the thought.
+ *
+ * This section owns the "direct locksmith" differentiator — geography lives in
+ * Service Areas, and the mid-page emergency band owns the urgent CTA.
+ */
 const benefits = [
   {
-    icon: 'bolt',
-    title: 'Fast Response',
-    body: 'Quick locksmith assistance when you need it most — call or send a WhatsApp message and get a straight answer about your situation.',
+    icon: 'phone',
+    title: 'Talk to Lidor',
+    body: 'No call centre — you reach the locksmith who will do the work.',
+  },
+  {
+    icon: 'check',
+    title: 'Fair Pricing',
+    body: 'Clear rates explained up front, so there are no surprises later.',
   },
   {
     icon: 'shield-check',
-    title: 'Professional Service',
-    body: 'Reliable, professional locksmith solutions using the right tools for the job, so your door, lock or vehicle is treated with care.',
+    title: 'Professional Work',
+    body: 'The right tools and method, with locks and doors handled carefully.',
   },
   {
     icon: 'key',
-    title: 'Residential, Commercial & Automotive',
-    body: 'Complete locksmith services for homes, businesses and vehicles — from a single stuck lock to a full master key system.',
-  },
-  {
-    icon: 'map-pin',
-    title: 'Serving Your Area',
-    body: `Serving Ventura County and surrounding communities, with coverage across ${areaCount} cities in the San Fernando Valley and Los Angeles area.`,
+    title: 'Home to Vehicle',
+    body: 'Lockouts, rekeys, car keys, and commercial systems — one locksmith.',
   },
 ];
 ---
@@ -29,30 +36,35 @@ const benefits = [
 <section class="section-y bg-paper text-on-paper" aria-labelledby="benefits-heading">
   <div class="container-page">
     <div class="mx-auto max-w-2xl text-center">
-      <p class="eyebrow reveal text-gold-deep">Why call KeyPoint</p>
-      <h2 id="benefits-heading" class="reveal mt-4 text-3xl sm:text-4xl lg:text-[2.75rem]">
-        Locksmith help without the runaround
+      <p class="eyebrow reveal text-gold-deep">Why choose KeyPoint</p>
+      <h2 id="benefits-heading" class="reveal mt-3 text-[1.75rem] sm:mt-4 sm:text-4xl lg:text-[2.75rem]">
+        Skilled work.<br />Fair price.<br />Direct answers.
       </h2>
-      <p class="reveal mt-5 text-[1.0625rem] text-on-paper-muted">
-        You reach {`Lidor`} directly — no call centre, no dispatcher, no being passed between
-        people while you stand outside your own front door.
+      <p class="reveal mt-3 hidden text-[1.0625rem] text-on-paper-muted sm:mt-5 sm:block">
+        Skilled locksmith work, honest pricing, and direct answers from the person who shows up.
       </p>
     </div>
 
-    <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4">
+    {/* Two-up on a phone: the four points sit as a 2×2 block rather than four
+        full-width rows, which roughly halves the height of the section. */}
+    <ul class="mt-6 grid grid-cols-2 gap-2.5 sm:mt-12 sm:gap-5 lg:mt-16 lg:grid-cols-4">
       {
         benefits.map((b, i) => (
           <li
-            class="group reveal relative flex flex-col rounded-2xl border border-paper-line bg-paper-card p-6 shadow-card transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-gold/45 hover:shadow-lift lg:p-7"
+            class="group reveal relative flex flex-col items-center rounded-2xl border border-paper-line bg-paper-card p-3.5 text-center shadow-card transition-[transform,box-shadow,border-color] duration-300 hover:border-gold/45 hover:shadow-lift sm:p-6 sm:hover:-translate-y-1 lg:p-7"
             style={`--reveal-delay: ${i * 80}ms`}
           >
-            <span class="grid h-12 w-12 place-items-center rounded-xl bg-ink text-gold transition-transform duration-300 group-hover:scale-105">
-              <Icon name={b.icon} size={24} />
+            <span class="grid h-10 w-10 place-items-center rounded-xl bg-ink text-gold transition-transform duration-300 group-hover:scale-105 sm:h-12 sm:w-12">
+              <Icon name={b.icon} size={20} />
             </span>
-            <h3 class="mt-5 font-display text-lg leading-snug font-bold text-on-paper">{b.title}</h3>
-            <p class="mt-2.5 text-[0.95rem] text-on-paper-muted">{b.body}</p>
+            <h3 class="mt-3 font-display text-[0.95rem] leading-snug font-bold text-balance text-on-paper sm:mt-5 sm:text-lg">
+              {b.title}
+            </h3>
+            <p class="mt-1.5 hidden text-[0.8rem] leading-relaxed text-on-paper-muted sm:mt-2.5 sm:block sm:text-[0.95rem]">
+              {b.body}
+            </p>
             <span
-              class="mt-5 h-1 w-10 rounded-full bg-gold/30 transition-all duration-300 group-hover:w-16 group-hover:bg-gold"
+              class="mt-5 hidden h-1 w-10 rounded-full bg-gold/30 transition-all duration-300 group-hover:w-16 group-hover:bg-gold sm:block"
               aria-hidden="true"
             />
           </li>

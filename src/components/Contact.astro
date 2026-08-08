@@ -5,13 +5,30 @@ import { serviceOptions } from '../data/services';
 
 const wa = whatsappHref(WA_DEFAULT_MESSAGE);
 
-const channels = [
+/**
+ * `duplicate` marks the two channels that the big buttons directly above this
+ * list already cover. They stay on wide screens, where the extra detail costs
+ * nothing, and drop out on a phone rather than repeating the same number twice
+ * within one screen height.
+ */
+interface Channel {
+  icon: string;
+  label: string;
+  value: string;
+  href: string;
+  note: string;
+  external?: boolean;
+  duplicate?: boolean;
+}
+
+const channels: Channel[] = [
   {
     icon: 'phone',
     label: 'Phone',
     value: site.phoneDisplay,
     href: telHref,
     note: 'Fastest way to reach us',
+    duplicate: true,
   },
   {
     icon: 'whatsapp',
@@ -20,6 +37,7 @@ const channels = [
     href: wa,
     note: 'Send photos of the lock or key',
     external: true,
+    duplicate: true,
   },
   {
     icon: 'mail',
@@ -47,33 +65,32 @@ const channels = [
   <div class="container-page">
     <div class="mx-auto max-w-2xl text-center">
       <p class="eyebrow reveal text-gold-deep">Get in touch</p>
-      <h2 id="contact-heading" class="reveal mt-4 text-3xl sm:text-4xl lg:text-[2.75rem]">
-        Talk to a locksmith, not a call centre
+      <h2 id="contact-heading" class="reveal mt-3 text-[1.75rem] sm:mt-4 sm:text-4xl lg:text-[2.75rem]">
+        Call, message, or send a request
       </h2>
-      <p class="reveal mt-5 text-[1.0625rem] text-on-paper-muted">
-        Call or WhatsApp for anything urgent. For quotes and scheduled work, send the form and
-        we'll get back to you.
+      <p class="reveal mt-3 text-[1.0625rem] text-on-paper-muted sm:mt-5">
+        Urgent lockouts — call or WhatsApp. Quotes and scheduled work — use the form and we'll
+        get back to you.
       </p>
     </div>
 
-    <div class="mt-12 grid gap-6 lg:mt-16 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-8">
+    <div class="mt-8 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-5 sm:mt-12 sm:gap-6 lg:mt-16 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-8">
       <!-- ------------------------------------------------------------ -->
       <!-- Direct contact                                                -->
       <!-- ------------------------------------------------------------ -->
-      <div class="reveal flex flex-col rounded-2xl bg-ink p-6 text-on-ink shadow-lift sm:p-8">
+      <div class="reveal flex min-w-0 flex-col rounded-2xl bg-ink p-5 text-on-ink shadow-lift sm:p-8">
         <p class="font-display text-[0.72rem] font-bold tracking-[0.16em] text-gold uppercase">
           {site.name}
         </p>
         <p class="mt-2 font-display text-xl font-bold sm:text-2xl">
           {site.owner}
         </p>
-        <p class="mt-2 text-[0.95rem] text-on-ink-muted">
-          Residential, commercial and automotive locksmith services across Ventura County, the San
-          Fernando Valley and Los Angeles.
+        <p class="mt-2 hidden text-[0.95rem] text-on-ink-muted sm:block">
+          Mobile locksmith — pick the channel that fits your situation.
         </p>
 
         <!-- The two actions that matter in an emergency, sized accordingly -->
-        <div class="mt-7 grid gap-3 sm:grid-cols-2">
+        <div class="mt-5 grid gap-3 sm:mt-7 sm:grid-cols-2">
           <a href={telHref} class="btn btn-gold !min-h-[3.4rem]" data-cta="contact-call">
             <Icon name="phone" size={19} />
             Call Now
@@ -90,10 +107,10 @@ const channels = [
           </a>
         </div>
 
-        <ul class="mt-7 space-y-1 border-t border-ink-line pt-2">
+        <ul class="mt-6 space-y-1 border-t border-ink-line pt-2 sm:mt-7">
           {
             channels.map((c) => (
-              <li>
+              <li class:list={[c.duplicate && 'hidden sm:block']}>
                 <a
                   href={c.href}
                   target={c.external ? '_blank' : undefined}
@@ -124,7 +141,7 @@ const channels = [
           }
         </ul>
 
-        <p class="mt-6 flex items-start gap-2.5 rounded-xl border border-ink-line bg-white/[0.03] px-4 py-3 text-[0.85rem] text-on-ink-muted">
+        <p class="mt-5 hidden items-start gap-2.5 rounded-xl border border-ink-line bg-white/[0.03] px-4 py-3 text-[0.85rem] text-on-ink-muted sm:mt-6 sm:flex">
           <Icon name="map-pin" size={16} class="mt-0.5 shrink-0 text-gold" />
           {/* Wrapped so the sentence stays one flex item and reflows normally. */}
           <span>
@@ -139,13 +156,31 @@ const channels = [
       <!-- ------------------------------------------------------------ -->
       <!-- Lead form                                                     -->
       <!-- ------------------------------------------------------------ -->
-      <div class="reveal rounded-2xl border border-paper-line bg-paper-card p-6 shadow-card sm:p-8">
-        <h3 class="font-display text-xl font-bold sm:text-2xl">Request Locksmith Service</h3>
-        <p class="mt-2 text-[0.95rem] text-on-paper-muted">
-          Four quick details and we'll know exactly what you need.
-        </p>
+      <details
+        id="kp-form-disclosure"
+        class="reveal min-w-0 overflow-hidden rounded-2xl border border-paper-line bg-paper-card shadow-card"
+        open
+      >
+        <summary
+          class="flex min-h-16 cursor-pointer list-none items-center gap-3 px-5 py-4 marker:content-none sm:hidden [&::-webkit-details-marker]:hidden"
+        >
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gold/15 text-gold-deep">
+            <Icon name="mail" size={19} />
+          </span>
+          <span>
+            <span class="block font-display font-bold text-on-paper">Request non-urgent service</span>
+            <span class="block text-[0.8rem] text-on-paper-muted">Open the short request form</span>
+          </span>
+          <Icon name="chevron-down" size={17} class="ml-auto text-gold-deep" />
+        </summary>
 
-        <form id="kp-lead-form" class="mt-7 space-y-5" novalidate>
+        <div class="border-t border-paper-line p-5 sm:border-t-0 sm:p-8">
+          <h3 class="font-display text-xl font-bold sm:text-2xl">Request Locksmith Service</h3>
+          <p class="mt-2 text-[0.95rem] text-on-paper-muted">
+            Four quick details and we'll know exactly what you need.
+          </p>
+
+          <form id="kp-lead-form" class="relative mt-6 space-y-4 sm:mt-7 sm:space-y-5" novalidate>
           <!-- Honeypot: real people never see or fill this. -->
           <div class="absolute left-[-9999px]" aria-hidden="true">
             <label for="kp-company">Company (leave blank)</label>
@@ -238,10 +273,10 @@ const channels = [
           <p id="kp-form-note" class="text-center text-[0.82rem] text-on-paper-muted"></p>
 
           <p class="kp-error text-center" id="kp-form-error" role="alert" hidden></p>
-        </form>
+          </form>
 
-        <!-- Success panel, swapped in after a successful submit -->
-        <div id="kp-lead-success" hidden class="py-6 text-center">
+          <!-- Success panel, swapped in after a successful submit -->
+          <div id="kp-lead-success" hidden class="py-6 text-center">
           <span class="mx-auto grid h-14 w-14 place-items-center rounded-full bg-gold text-on-gold">
             <Icon name="check" size={28} />
           </span>
@@ -257,8 +292,9 @@ const channels = [
               Send another request
             </button>
           </div>
+          </div>
         </div>
-      </div>
+      </details>
     </div>
   </div>
 </section>
@@ -344,11 +380,35 @@ const channels = [
       transform: rotate(360deg);
     }
   }
+
+  @media (width < 64rem) {
+    :global(html.js) #kp-form-disclosure:not([data-disclosure-ready]) > :not(summary) {
+      display: none;
+    }
+  }
 </style>
 
 <script>
   import { hasBackend, postLead, formatLead, type Lead } from '../lib/leads';
   import { site, whatsappHref, mailHref } from '../data/site';
+
+  const formDisclosure = document.getElementById('kp-form-disclosure') as HTMLDetailsElement | null;
+  if (formDisclosure) {
+    const wideForm = window.matchMedia('(min-width: 64rem)');
+    let disclosureTouched = false;
+
+    formDisclosure.querySelector('summary')?.addEventListener('click', () => {
+      disclosureTouched = true;
+    });
+
+    const syncDisclosure = () => {
+      if (!disclosureTouched) formDisclosure.open = wideForm.matches;
+    };
+
+    syncDisclosure();
+    formDisclosure.dataset.disclosureReady = '';
+    wideForm.addEventListener('change', syncDisclosure);
+  }
 
   const form = document.getElementById('kp-lead-form') as HTMLFormElement | null;
   const success = document.getElementById('kp-lead-success');
