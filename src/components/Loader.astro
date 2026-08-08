@@ -1,0 +1,339 @@
+---
+/**
+ * Initial-load animation: a padlock is drawn, a key slides in, turns, and the
+ * shackle springs open before the overlay clears.
+ *
+ * Design constraints this implementation respects:
+ *  - Zero network cost. The artwork is inline SVG and the CSS is inlined right
+ *    beside it, so the loader paints on the first frame — it never becomes the
+ *    thing the user waits for.
+ *  - Never traps the user. Dismissal is driven by a CSS animation, so the
+ *    overlay clears itself even if JavaScript is disabled or fails. The script
+ *    only tidies up afterwards and unlocks scrolling.
+ *  - Invisible to crawlers and assistive tech. The real page is fully rendered
+ *    underneath; the overlay is aria-hidden and removed from the DOM.
+ *  - Shown once per session (sessionStorage), not on every navigation.
+ *  - Skipped entirely under `prefers-reduced-motion`.
+ */
+---
+
+<style is:inline>
+  /* Hidden ahead of first paint on repeat views and for reduced-motion users. */
+  html.kp-skip-loader #kp-loader {
+    display: none !important;
+  }
+
+  html.kp-loading,
+  html.kp-loading body {
+    overflow: hidden;
+  }
+
+  #kp-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: center;
+    gap: 0;
+    background: radial-gradient(120% 90% at 50% 40%, #14181f 0%, #0b0d10 55%, #050608 100%);
+    /* Self-clearing: if JS never runs, the overlay still gets out of the way. */
+    animation: kp-dismiss 0.45s cubic-bezier(0.4, 0, 0.2, 1) 1.5s forwards;
+  }
+
+  .kp-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    animation: kp-stage-out 0.45s cubic-bezier(0.4, 0, 0.2, 1) 1.5s forwards;
+  }
+
+  .kp-lock {
+    width: clamp(112px, 26vw, 148px);
+    height: auto;
+    overflow: visible;
+  }
+
+  /* -- Lock body: outline draws on, fill fades in ------------------------- */
+  .kp-body-line {
+    stroke-dasharray: 300;
+    stroke-dashoffset: 300;
+    animation: kp-draw 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .kp-body-fill,
+  .kp-keyhole {
+    opacity: 0;
+    animation: kp-fade 0.4s ease-out 0.32s forwards;
+  }
+
+  .kp-shackle-line {
+    stroke-dasharray: 130;
+    stroke-dashoffset: 130;
+    animation: kp-draw 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards;
+  }
+
+  /* -- Key: slides in, then turns in the cylinder ------------------------- */
+  .kp-key-slide {
+    transform-box: view-box;
+    transform-origin: 80px 92px;
+    transform: translateX(-58px);
+    opacity: 0;
+    animation: kp-insert 0.5s cubic-bezier(0.32, 0.9, 0.35, 1) 0.34s forwards;
+  }
+
+  .kp-key-turn {
+    transform-box: view-box;
+    transform-origin: 80px 92px;
+    animation: kp-turn 0.3s cubic-bezier(0.6, 0, 0.2, 1) 0.86s forwards;
+  }
+
+  /* -- Shackle: lifts, then pivots open ----------------------------------- */
+  .kp-shackle-lift {
+    transform-box: view-box;
+    transform-origin: 80px 60px;
+    animation: kp-lift 0.34s cubic-bezier(0.22, 1.6, 0.4, 1) 1.02s forwards;
+  }
+
+  .kp-shackle-swing {
+    transform-box: view-box;
+    transform-origin: 103px 52px;
+    animation: kp-swing 0.32s cubic-bezier(0.22, 1, 0.36, 1) 1.14s forwards;
+  }
+
+  /* -- The "click" of the lock giving way --------------------------------- */
+  .kp-flash {
+    transform-box: view-box;
+    transform-origin: 80px 96px;
+    opacity: 0;
+    animation: kp-flash 0.5s ease-out 1.04s forwards;
+  }
+
+  /* -- Progress ----------------------------------------------------------- */
+  .kp-track {
+    position: relative;
+    width: clamp(140px, 42vw, 184px);
+    height: 3px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.09);
+    overflow: hidden;
+  }
+
+  .kp-bar {
+    position: absolute;
+    inset: 0;
+    transform-origin: left center;
+    transform: scaleX(0);
+    border-radius: inherit;
+    background: linear-gradient(90deg, #a9761f, #e8bc63);
+    animation: kp-progress 1.42s cubic-bezier(0.4, 0.1, 0.2, 1) forwards;
+  }
+
+  @keyframes kp-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes kp-fade {
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes kp-insert {
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  @keyframes kp-turn {
+    to {
+      transform: rotate(-34deg);
+    }
+  }
+  @keyframes kp-lift {
+    to {
+      transform: translateY(-13px);
+    }
+  }
+  @keyframes kp-swing {
+    to {
+      transform: rotate(-26deg);
+    }
+  }
+  @keyframes kp-flash {
+    0% {
+      opacity: 0;
+      transform: scale(0.55);
+    }
+    35% {
+      opacity: 0.85;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.5);
+    }
+  }
+  @keyframes kp-progress {
+    0% {
+      transform: scaleX(0);
+    }
+    62% {
+      transform: scaleX(0.72);
+    }
+    100% {
+      transform: scaleX(1);
+    }
+  }
+  @keyframes kp-dismiss {
+    to {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+  @keyframes kp-stage-out {
+    to {
+      transform: scale(1.07);
+      opacity: 0;
+    }
+  }
+
+  /* Reduced motion: no theatre, just get out of the way immediately. */
+  @media (prefers-reduced-motion: reduce) {
+    #kp-loader {
+      display: none !important;
+    }
+  }
+</style>
+
+<div id="kp-loader" aria-hidden="true" role="presentation">
+  <div class="kp-stage">
+    <svg
+      class="kp-lock"
+      viewBox="0 0 160 150"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="kp-body" x1="44" y1="64" x2="116" y2="132" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#1d232c" />
+          <stop offset="1" stop-color="#0e1218" />
+        </linearGradient>
+        <linearGradient id="kp-gold" x1="20" y1="82" x2="90" y2="102" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#f0cd82" />
+          <stop offset="0.5" stop-color="#d4a24c" />
+          <stop offset="1" stop-color="#a9761f" />
+        </linearGradient>
+        <linearGradient id="kp-steel" x1="58" y1="20" x2="103" y2="66" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#e2e7ee" />
+          <stop offset="0.55" stop-color="#9aa3b1" />
+          <stop offset="1" stop-color="#6d7685" />
+        </linearGradient>
+        <radialGradient id="kp-glow">
+          <stop offset="0" stop-color="#e8bc63" stop-opacity="0.75" />
+          <stop offset="1" stop-color="#e8bc63" stop-opacity="0" />
+        </radialGradient>
+
+        <!-- Hides the key's blade once it passes the lock's edge, so the key
+             reads as going *into* the cylinder rather than sitting on top. -->
+        <mask id="kp-inside">
+          <rect x="-40" y="0" width="240" height="150" fill="#fff" />
+          <rect x="44" y="64" width="72" height="68" rx="16" fill="#000" />
+        </mask>
+      </defs>
+
+      <!-- Shackle -->
+      <g class="kp-shackle-swing">
+        <g class="kp-shackle-lift">
+          <path
+            class="kp-shackle-line"
+            d="M57 70V52a23 23 0 0 1 46 0v18"
+            stroke="url(#kp-steel)"
+            stroke-width="10"
+            stroke-linecap="round"
+          />
+        </g>
+      </g>
+
+      <!-- Body -->
+      <rect class="kp-body-fill" x="44" y="64" width="72" height="68" rx="16" fill="url(#kp-body)" />
+      <rect
+        class="kp-body-line"
+        x="44"
+        y="64"
+        width="72"
+        height="68"
+        rx="16"
+        stroke="url(#kp-gold)"
+        stroke-width="2.5"
+      />
+
+      <!-- Keyhole -->
+      <g class="kp-keyhole" fill="#05070a">
+        <circle cx="80" cy="92" r="8" />
+        <path d="M76 98h8l3 18H73z" />
+      </g>
+
+      <!-- Key -->
+      <g mask="url(#kp-inside)">
+        <g class="kp-key-turn">
+          <g class="kp-key-slide" fill="url(#kp-gold)">
+            <path
+              d="M36 88.4h46v7.2H36zM52 95.6h5v6h-5zM62 95.6h4.5v7.5H62z"
+            />
+            <circle cx="25" cy="92" r="11.5" />
+            <circle cx="25" cy="92" r="4.6" fill="#0b0d10" />
+          </g>
+        </g>
+      </g>
+
+      <!-- Unlock flash -->
+      <circle class="kp-flash" cx="80" cy="96" r="52" fill="url(#kp-glow)" />
+    </svg>
+
+    <div class="kp-track"><div class="kp-bar"></div></div>
+  </div>
+</div>
+
+<script is:inline>
+  // Runs before the loader paints (see Base.astro for the html.js bootstrap).
+  (function () {
+    var root = document.documentElement;
+    var el = document.getElementById('kp-loader');
+    if (!el) return;
+
+    var reduced =
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var seen = false;
+    try {
+      seen = sessionStorage.getItem('kp-intro') === '1';
+    } catch (e) {
+      /* private mode — just show it */
+    }
+
+    if (seen || reduced) {
+      root.classList.add('kp-skip-loader');
+      el.remove();
+      return;
+    }
+
+    try {
+      sessionStorage.setItem('kp-intro', '1');
+    } catch (e) {}
+
+    // Only JS locks the scroll, so a no-JS visitor is never stuck.
+    root.classList.add('kp-loading');
+
+    var done = function () {
+      root.classList.remove('kp-loading');
+      if (el.parentNode) el.remove();
+    };
+
+    el.addEventListener('animationend', function (ev) {
+      if (ev.animationName === 'kp-dismiss') done();
+    });
+    // Belt and braces, in case the animation event is missed (background tab).
+    setTimeout(done, 2600);
+  })();
+</script>

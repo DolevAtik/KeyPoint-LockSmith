@@ -1,0 +1,483 @@
+---
+import Icon from './Icon.astro';
+import { areaRegions, allAreas, areaCount } from '../data/areas';
+import { telHref, site } from '../data/site';
+
+/** Payload for the map script — parsed from a JSON script tag, so the module
+ *  stays bundle-friendly (no `define:vars`, which would force an inline script). */
+const mapPayload = allAreas.map((a, i) => ({ i, city: a.city, zips: a.zips, lat: a.lat, lng: a.lng }));
+
+// Index lookup so a list card can address its own marker.
+let cursor = 0;
+const regionsWithIndex = areaRegions.map((r) => ({
+  ...r,
+  cities: r.cities.map((c) => ({ ...c, index: cursor++ })),
+}));
+---
+
+<section id="service-areas" class="section-y bg-paper text-on-paper" aria-labelledby="areas-heading">
+  <div class="container-page">
+    <!-- Intro -->
+    <div class="mx-auto max-w-3xl text-center">
+      <p class="eyebrow reveal text-gold-deep">Where we work</p>
+      <h2 id="areas-heading" class="reveal mt-4 text-3xl sm:text-4xl lg:text-[2.75rem]">
+        Locksmith Services Throughout Ventura County &amp; Los Angeles
+      </h2>
+      <p class="reveal mt-5 text-[1.0625rem] text-on-paper-muted">
+        {site.name} provides locksmith services across Ventura, Oxnard, Camarillo, Simi Valley,
+        Thousand Oaks and Westlake Village, as well as selected areas throughout the San Fernando
+        Valley and the greater Los Angeles area — {areaCount} communities in total.
+      </p>
+    </div>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- Map                                                               -->
+    <!-- ---------------------------------------------------------------- -->
+    <div class="reveal mt-10 lg:mt-14">
+      <div
+        class="relative overflow-hidden rounded-2xl border border-paper-line bg-paper-card shadow-lift"
+      >
+        <div
+          id="kp-map"
+          class="h-[340px] w-full sm:h-[440px] lg:h-[520px]"
+          role="application"
+          aria-label={`Map of the ${areaCount} cities served by ${site.name}`}
+        >
+          <!-- Placeholder shown until Leaflet loads; also what a no-JS visitor
+               sees, which is why the full area list below is the real content. -->
+          <div id="kp-map-fallback" class="grid h-full w-full place-items-center bg-[#eef1f5] px-6 text-center">
+            <div>
+              <span class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-ink text-gold">
+                <Icon name="map-pin" size={24} />
+              </span>
+              <p class="mt-3 font-display text-sm font-semibold text-on-paper-muted">
+                Loading service area map…
+              </p>
+              <p class="mt-1 text-xs text-on-paper-muted">
+                All {areaCount} cities are listed below.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tap-to-interact shield: stops the map from stealing page scroll on
+             touch devices until the visitor deliberately engages with it. -->
+        <button
+          type="button"
+          id="kp-map-shield"
+          class="absolute inset-0 z-[400] hidden place-items-center bg-ink/35 backdrop-blur-[1px]"
+          aria-label="Activate the map"
+        >
+          <span
+            class="rounded-full border border-white/20 bg-ink/85 px-5 py-3 font-display text-sm font-bold text-on-ink shadow-lift"
+          >
+            Tap to explore the map
+          </span>
+        </button>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 border-t border-paper-line px-4 py-3">
+          <p class="flex items-center gap-2 text-[0.8rem] text-on-paper-muted">
+            <Icon name="map-pin" size={15} class="text-gold-deep" />
+            Select a marker or a city below to see its ZIP codes.
+          </p>
+          <button
+            type="button"
+            id="kp-map-reset"
+            class="rounded-lg border border-paper-line px-3 py-2 font-display text-[0.8rem] font-semibold text-on-paper transition-colors duration-200 hover:border-gold hover:text-gold-deep"
+          >
+            Show all areas
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- Area list — the readable, crawlable source of truth               -->
+    <!-- ---------------------------------------------------------------- -->
+    <div class="mt-12 space-y-10 lg:mt-16 lg:space-y-12">
+      {
+        regionsWithIndex.map((region) => (
+          <div class="reveal">
+            <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-paper-line pb-4">
+              <h3 class="font-display text-xl font-bold text-on-paper sm:text-2xl">{region.region}</h3>
+              <p class="text-[0.9rem] text-on-paper-muted">{region.blurb}</p>
+              <span class="ml-auto font-display text-[0.75rem] font-bold tracking-[0.14em] text-on-paper-muted uppercase">
+                {region.cities.length} cities
+              </span>
+            </div>
+
+            <ul class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {region.cities.map((city) => (
+                <li>
+                  <button
+                    type="button"
+                    class="area-card group flex w-full flex-col items-start rounded-xl border border-paper-line bg-paper-card p-4 text-left transition-[transform,border-color,box-shadow] duration-250 hover:-translate-y-0.5 hover:border-gold hover:shadow-card"
+                    data-city-index={city.index}
+                  >
+                    <span class="flex w-full items-center gap-2">
+                      <Icon
+                        name="map-pin"
+                        size={16}
+                        class="shrink-0 text-gold-deep transition-transform duration-250 group-hover:scale-110"
+                      />
+                      <span class="font-display text-[0.98rem] font-bold text-on-paper">
+                        {city.city}
+                      </span>
+                    </span>
+                    <span class="mt-1.5 text-[0.82rem] leading-relaxed text-on-paper-muted">
+                      {city.zips.join(' · ')}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- Local SEO copy                                                    -->
+    <!-- ---------------------------------------------------------------- -->
+    <div class="reveal mt-14 grid gap-8 rounded-2xl border border-paper-line bg-paper-card p-6 shadow-card sm:p-8 lg:mt-20 lg:grid-cols-[1.4fr_1fr] lg:gap-12 lg:p-10">
+      <div>
+        <h3 class="font-display text-xl font-bold sm:text-2xl">Local locksmith, local knowledge</h3>
+        <div class="mt-4 space-y-4 text-[0.98rem] text-on-paper-muted">
+          <p>
+            Ventura County covers a lot of ground, and the kind of locksmith work that comes up in
+            a 1920s bungalow in downtown Ventura is rarely the same as what a new build in
+            Camarillo or a storefront in Simi Valley needs. Knowing the area means turning up with
+            the right hardware the first time.
+          </p>
+          <p>
+            Coverage runs from the coast at Ventura, Oxnard and Port Hueneme, inland through Santa
+            Paula, Camarillo and Moorpark, along the 101 corridor through Thousand Oaks, Westlake
+            Village, Agoura Hills and Calabasas, and across the San Fernando Valley — Woodland
+            Hills, Northridge, Van Nuys, Sherman Oaks, Encino and neighbouring communities —
+            through to Santa Clarita and Burbank.
+          </p>
+          <p>
+            Not sure whether your street falls inside the service area? Give the ZIP code over the
+            phone and you'll get a straight yes or no.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-col justify-center rounded-xl border border-paper-line bg-paper p-6">
+        <p class="font-display text-[0.72rem] font-bold tracking-[0.16em] text-on-paper-muted uppercase">
+          Check your area
+        </p>
+        <p class="mt-3 font-display text-lg leading-snug font-bold text-on-paper">
+          Tell us your ZIP code and we'll confirm coverage.
+        </p>
+        <a href={telHref} class="btn btn-gold mt-5 w-full" data-cta="areas-call">
+          <Icon name="phone" size={18} />
+          {site.phoneDisplay}
+        </a>
+        <a href="#contact" class="btn btn-ghost-light mt-2.5 w-full"> Send a message instead </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="kp-areas-data" set:html={JSON.stringify(mapPayload)} />
+
+<style is:global>
+  /* Leaflet chrome, restyled to match the site rather than the library default. */
+  #kp-map .leaflet-container {
+    font-family: var(--font-sans);
+    background: #eef1f5;
+  }
+
+  /* Softens the raw OSM raster so it sits inside the design instead of shouting. */
+  #kp-map .leaflet-tile-pane {
+    filter: saturate(0.72) contrast(1.04) brightness(1.02);
+  }
+
+  #kp-map .leaflet-popup-content-wrapper {
+    border-radius: 0.85rem;
+    padding: 0;
+    background: var(--color-ink-card);
+    color: var(--color-on-ink);
+    box-shadow: 0 18px 40px -16px rgb(0 0 0 / 0.55);
+    border: 1px solid var(--color-ink-line);
+  }
+
+  #kp-map .leaflet-popup-content {
+    margin: 0;
+    padding: 0.9rem 1.05rem;
+    width: auto !important;
+    line-height: 1.5;
+  }
+
+  #kp-map .leaflet-popup-tip {
+    background: var(--color-ink-card);
+    border: 1px solid var(--color-ink-line);
+  }
+
+  #kp-map .leaflet-popup-close-button {
+    color: var(--color-on-ink-muted) !important;
+    padding: 0.55rem 0.6rem 0 0 !important;
+  }
+
+  #kp-map .leaflet-popup-close-button:hover {
+    color: var(--color-gold) !important;
+  }
+
+  #kp-map .kp-popup-city {
+    font-family: var(--font-display);
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--color-on-ink);
+  }
+
+  #kp-map .kp-popup-label {
+    display: block;
+    margin-top: 0.4rem;
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  #kp-map .kp-popup-zips {
+    margin-top: 0.15rem;
+    font-size: 0.85rem;
+    color: var(--color-on-ink-muted);
+  }
+
+  #kp-map .kp-popup-call {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.7rem;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-gold);
+    text-decoration: none;
+  }
+
+  #kp-map .kp-popup-call:hover {
+    text-decoration: underline;
+  }
+
+  /* Custom pin: avoids Leaflet's default marker PNGs entirely. */
+  #kp-map .kp-pin {
+    display: block;
+    transition:
+      transform 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.2s ease;
+    transform-origin: 50% 100%;
+    filter: drop-shadow(0 4px 6px rgb(11 13 16 / 0.35));
+  }
+
+  #kp-map .leaflet-marker-icon:hover .kp-pin,
+  #kp-map .kp-pin.is-active {
+    transform: scale(1.22);
+    filter: drop-shadow(0 7px 10px rgb(11 13 16 / 0.45));
+  }
+
+  #kp-map .leaflet-control-attribution {
+    background: rgb(255 255 255 / 0.86);
+    font-size: 10px;
+    color: #556071;
+  }
+
+  #kp-map .leaflet-control-attribution a {
+    color: #a9761f;
+  }
+
+  #kp-map .leaflet-bar a {
+    color: var(--color-on-paper);
+  }
+
+  #kp-map-shield.is-armed {
+    display: grid;
+  }
+</style>
+
+<script>
+  // `?url` yields just the asset path. Importing the stylesheet normally would
+  // make Astro hoist it into a render-blocking <link> in <head>, which defeats
+  // the point of lazy-loading the map.
+  import leafletCssUrl from 'leaflet/dist/leaflet.css?url';
+
+  interface Area {
+    i: number;
+    city: string;
+    zips: string[];
+    lat: number;
+    lng: number;
+  }
+
+  const container = document.getElementById('kp-map');
+  const dataEl = document.getElementById('kp-areas-data');
+
+  if (container && dataEl?.textContent) {
+    const areas: Area[] = JSON.parse(dataEl.textContent);
+    let ready: Promise<void> | null = null;
+    let focusCity: ((index: number) => void) | null = null;
+    let queued: number | null = null;
+
+    /**
+     * Leaflet is ~150 KB — far too much to spend on a visitor who only wants a
+     * phone number. It is fetched the first time the map approaches the
+     * viewport, or immediately if someone taps a city card before then.
+     */
+    const boot = () => {
+      if (ready) return ready;
+
+      /** Adds Leaflet's stylesheet on demand and resolves once it has applied. */
+      const loadCss = () =>
+        new Promise<void>((resolve) => {
+          if (document.querySelector(`link[data-leaflet-css]`)) return resolve();
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = leafletCssUrl;
+          link.dataset.leafletCss = '';
+          // Resolve either way — a missing stylesheet should not block the map.
+          link.onload = () => resolve();
+          link.onerror = () => resolve();
+          document.head.appendChild(link);
+        });
+
+      ready = (async () => {
+        const [L] = await Promise.all([import('leaflet').then((m) => m.default), loadCss()]);
+
+        const fallback = document.getElementById('kp-map-fallback');
+        fallback?.remove();
+
+        const map = L.map(container, {
+          scrollWheelZoom: false, // never hijack the page scroll
+          zoomControl: true,
+          attributionControl: true,
+        });
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+
+        const pin = (active = false) =>
+          L.divIcon({
+            className: '',
+            html: `<span class="kp-pin${active ? ' is-active' : ''}">
+                     <svg width="30" height="38" viewBox="0 0 30 38" xmlns="http://www.w3.org/2000/svg">
+                       <path d="M15 37S28 22.8 28 15A13 13 0 1 0 2 15c0 7.8 13 22 13 22Z" fill="#D4A24C" stroke="#0B0D10" stroke-width="1.6"/>
+                       <circle cx="15" cy="14.6" r="5" fill="#0B0D10"/>
+                     </svg>
+                   </span>`,
+            iconSize: [30, 38],
+            iconAnchor: [15, 38],
+            popupAnchor: [0, -32],
+          });
+
+        const markers = areas.map((area) => {
+          const marker = L.marker([area.lat, area.lng], {
+            icon: pin(),
+            title: `${area.city}, CA`,
+            alt: `${area.city} service area marker`,
+            riseOnHover: true,
+          }).addTo(map);
+
+          marker.bindPopup(
+            `<div>
+               <p class="kp-popup-city">${area.city}, CA</p>
+               <span class="kp-popup-label">ZIP codes</span>
+               <p class="kp-popup-zips">${area.zips.join(' · ')}</p>
+               <a class="kp-popup-call" href="tel:+17473548313">Call +1 747-354-8313 &rarr;</a>
+             </div>`,
+            { closeButton: true, maxWidth: 260 }
+          );
+
+          return marker;
+        });
+
+        const bounds = L.latLngBounds(areas.map((a) => [a.lat, a.lng] as [number, number]));
+        const fitAll = () => map.fitBounds(bounds, { padding: [42, 42] });
+        fitAll();
+
+        // Wheel zoom only after a deliberate click, disabled again on leaving.
+        map.on('click', () => map.scrollWheelZoom.enable());
+        map.on('mouseout', () => map.scrollWheelZoom.disable());
+
+        document.getElementById('kp-map-reset')?.addEventListener('click', () => {
+          map.closePopup();
+          fitAll();
+        });
+
+        // Touch devices: hold off panning until the visitor opts in, so a
+        // swipe over the map scrolls the page as expected.
+        const shield = document.getElementById('kp-map-shield');
+        if (shield && window.matchMedia('(hover: none)').matches) {
+          map.dragging.disable();
+          shield.classList.add('is-armed');
+          shield.addEventListener(
+            'click',
+            () => {
+              map.dragging.enable();
+              shield.classList.remove('is-armed');
+            },
+            { once: true }
+          );
+        }
+
+        focusCity = (index: number) => {
+          const marker = markers[index];
+          const area = areas[index];
+          if (!marker || !area) return;
+
+          map.dragging.enable();
+          document.getElementById('kp-map-shield')?.classList.remove('is-armed');
+          map.flyTo([area.lat, area.lng], 12, { duration: 0.7 });
+          marker.openPopup();
+        };
+
+        if (queued !== null) {
+          focusCity(queued);
+          queued = null;
+        }
+
+        // Leaflet mis-sizes itself if the container was laid out while hidden.
+        requestAnimationFrame(() => map.invalidateSize());
+      })();
+
+      return ready;
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            io.disconnect();
+            boot();
+          }
+        },
+        { rootMargin: '300px' }
+      );
+      io.observe(container);
+    } else {
+      boot();
+    }
+
+    // City cards drive the map.
+    document.querySelectorAll<HTMLButtonElement>('.area-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        const index = Number(card.dataset.cityIndex);
+        if (Number.isNaN(index)) return;
+
+        container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        if (focusCity) {
+          focusCity(index);
+        } else {
+          queued = index;
+          boot();
+        }
+      });
+    });
+  }
+</script>

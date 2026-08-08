@@ -1,0 +1,29 @@
+---
+/**
+ * Hidden SVG sprite holding one <symbol> per icon. Rendered once, near the top
+ * of <body>, so every <use> reference in the page resolves immediately.
+ *
+ * Deliberately not an external .svg file: a same-document sprite needs no
+ * request, and cross-document <use> is unreliable across browsers.
+ */
+import { iconPaths } from './icon-paths';
+
+const entries = Object.entries(iconPaths);
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="0"
+  height="0"
+  aria-hidden="true"
+  focusable="false"
+  style="position:absolute;width:0;height:0;overflow:hidden"
+>
+  <defs>
+    {
+      entries.map(([name, geometry]) => (
+        <symbol id={`kp-i-${name}`} viewBox="0 0 24 24" set:html={geometry} />
+      ))
+    }
+  </defs>
+</svg>

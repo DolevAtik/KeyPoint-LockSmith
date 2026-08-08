@@ -1,0 +1,274 @@
+---
+import Icon from './Icon.astro';
+import { site, telHref, whatsappHref, WA_EMERGENCY_MESSAGE } from '../data/site';
+
+const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
+
+const pillars = [
+  { icon: 'home', label: 'Residential' },
+  { icon: 'building', label: 'Commercial' },
+  { icon: 'car', label: 'Automotive' },
+];
+---
+
+<section id="home" class="relative overflow-hidden bg-ink">
+  <!-- Ambient light: a warm pool behind the artwork, cool depth on the left. -->
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div class="grid-texture absolute inset-0 opacity-70"></div>
+    <div
+      class="absolute -top-40 -right-32 h-[38rem] w-[38rem] rounded-full opacity-[0.55] blur-[120px]"
+      style="background: radial-gradient(circle, #d4a24c 0%, transparent 68%)"
+    >
+    </div>
+    <div
+      class="absolute -bottom-56 -left-40 h-[34rem] w-[34rem] rounded-full opacity-40 blur-[130px]"
+      style="background: radial-gradient(circle, #1e3a5f 0%, transparent 70%)"
+    >
+    </div>
+    <!-- Blends the hero into the trust strip below. -->
+    <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-ink"></div>
+  </div>
+
+  <div class="container-page relative pt-12 pb-16 sm:pt-16 lg:pt-20 lg:pb-24">
+    <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16 xl:gap-20">
+      <!-- ------------------------------------------------------------ -->
+      <!-- Copy + conversion                                             -->
+      <!-- ------------------------------------------------------------ -->
+      <div class="max-w-2xl">
+        <p
+          class="eyebrow reveal inline-flex rounded-full border border-gold/30 bg-gold/10 px-3.5 py-1.5 text-gold"
+        >
+          <span class="relative flex h-2 w-2" aria-hidden="true">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold opacity-70"></span>
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-gold"></span>
+          </span>
+          Emergency Locksmith · Ventura County &amp; LA
+        </p>
+
+        <h1
+          class="reveal mt-5 text-[2.35rem] leading-[1.05] text-on-ink sm:text-[3.1rem] lg:text-[3.6rem] xl:text-[4rem]"
+          style="--reveal-delay: 60ms"
+        >
+          Emergency Locksmith Services
+          <span class="relative inline-block text-gold">
+            You Can Trust
+            <svg
+              class="absolute -bottom-1 left-0 h-2.5 w-full text-gold/45"
+              viewBox="0 0 200 10"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path d="M2 7.5C46 3 108 2.2 198 5.4" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" />
+            </svg>
+          </span>
+        </h1>
+
+        <p
+          class="reveal mt-6 max-w-xl text-[1.0625rem] text-on-ink-muted sm:text-lg"
+          style="--reveal-delay: 120ms"
+        >
+          Fast, professional locksmith services for homes, businesses and vehicles throughout
+          Ventura County and the surrounding areas. Locked out, lost your keys or need a lock
+          changed? Call {site.owner.split(' ')[0]} directly.
+        </p>
+
+        <!-- Primary conversion block -->
+        <div class="reveal mt-8 flex flex-col gap-3 sm:flex-row sm:items-center" style="--reveal-delay: 180ms">
+          <a href={telHref} class="btn btn-gold btn-lg w-full sm:w-auto" data-cta="hero-call">
+            <Icon name="phone" size={20} />
+            Call Now — {site.phoneDisplay}
+          </a>
+          <a
+            href={wa}
+            target="_blank"
+            rel="noopener"
+            class="btn btn-ghost-dark btn-lg w-full sm:w-auto"
+            data-cta="hero-whatsapp"
+          >
+            <Icon name="whatsapp" size={20} class="text-whatsapp" />
+            WhatsApp Us
+          </a>
+        </div>
+
+        <!-- The number again, as selectable text, for desktop users who dial manually -->
+        <p class="reveal mt-5 text-sm text-on-ink-muted" style="--reveal-delay: 220ms">
+          Prefer to dial?
+          <a
+            href={telHref}
+            class="ml-1 font-display text-base font-bold tracking-tight text-on-ink underline decoration-gold/50 underline-offset-4 transition-colors hover:text-gold"
+          >
+            {site.phoneDisplay}
+          </a>
+        </p>
+
+        <!-- Service pillars -->
+        <ul class="reveal mt-9 flex flex-wrap gap-2.5" style="--reveal-delay: 260ms">
+          {
+            pillars.map((p) => (
+              <li class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2.5">
+                <Icon name={p.icon} size={18} class="text-gold" />
+                <span class="font-display text-sm font-semibold text-on-ink">{p.label}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- ------------------------------------------------------------ -->
+      <!-- Hero artwork (decorative, desktop only to keep mobile light)  -->
+      <!-- ------------------------------------------------------------ -->
+      <div class="relative hidden lg:block" aria-hidden="true">
+        <div class="relative mx-auto aspect-square w-full max-w-[26rem]">
+          <svg viewBox="0 0 400 400" class="h-full w-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="h-body" x1="120" y1="180" x2="280" y2="340" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#232a35" />
+                <stop offset="1" stop-color="#0e1218" />
+              </linearGradient>
+              <linearGradient id="h-steel" x1="150" y1="90" x2="255" y2="190" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#e8edf4" />
+                <stop offset="0.5" stop-color="#98a2b1" />
+                <stop offset="1" stop-color="#5f6875" />
+              </linearGradient>
+              <linearGradient id="h-gold" x1="120" y1="180" x2="290" y2="330" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#f2d28a" />
+                <stop offset="0.55" stop-color="#d4a24c" />
+                <stop offset="1" stop-color="#9c6b19" />
+              </linearGradient>
+              <radialGradient id="h-glow">
+                <stop offset="0" stop-color="#d4a24c" stop-opacity="0.42" />
+                <stop offset="1" stop-color="#d4a24c" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+
+            <circle cx="200" cy="215" r="175" fill="url(#h-glow)" />
+
+            <!-- Orbit rings -->
+            <circle cx="200" cy="215" r="158" stroke="#d4a24c" stroke-opacity="0.14" stroke-width="1" />
+            <circle
+              class="hero-orbit"
+              cx="200"
+              cy="215"
+              r="134"
+              stroke="#d4a24c"
+              stroke-opacity="0.3"
+              stroke-width="1.5"
+              stroke-dasharray="3 13"
+              stroke-linecap="round"
+            />
+
+            <!-- Key, tucked behind the padlock -->
+            <g transform="rotate(-38 200 215)" opacity="0.9">
+              <path d="M196 208h118v14H196z" fill="url(#h-gold)" opacity="0.55" />
+              <path d="M286 222h11v14h-11zM266 222h9v18h-9z" fill="url(#h-gold)" opacity="0.55" />
+              <circle cx="176" cy="215" r="30" fill="url(#h-gold)" opacity="0.55" />
+              <circle cx="176" cy="215" r="13" fill="#0b0d10" />
+            </g>
+
+            <!-- Padlock -->
+            <path
+              d="M163 196v-42a37 37 0 0 1 74 0v42"
+              stroke="url(#h-steel)"
+              stroke-width="17"
+              stroke-linecap="round"
+            />
+            <rect x="126" y="192" width="148" height="136" rx="30" fill="url(#h-body)" />
+            <rect
+              x="126"
+              y="192"
+              width="148"
+              height="136"
+              rx="30"
+              stroke="url(#h-gold)"
+              stroke-width="2.5"
+            />
+            <rect x="139" y="205" width="122" height="110" rx="22" stroke="#ffffff" stroke-opacity="0.06" />
+
+            <!-- Keyhole -->
+            <g fill="url(#h-gold)">
+              <circle cx="200" cy="248" r="16" />
+              <path d="M192 260h16l6 34h-28z" />
+            </g>
+            <circle class="hero-pulse" cx="200" cy="252" r="46" fill="url(#h-glow)" />
+          </svg>
+
+          <!-- Floating labels -->
+          <div
+            class="hero-float absolute top-[16%] -left-2 flex items-center gap-2 rounded-xl border border-white/12 bg-ink-card/85 px-3.5 py-2.5 shadow-lift backdrop-blur-md"
+          >
+            <Icon name="bolt" size={17} class="text-gold" />
+            <span class="font-display text-[0.82rem] font-bold text-on-ink">Emergency Lockouts</span>
+          </div>
+
+          <div
+            class="hero-float hero-float--slow absolute top-[46%] -right-3 flex items-center gap-2 rounded-xl border border-white/12 bg-ink-card/85 px-3.5 py-2.5 shadow-lift backdrop-blur-md"
+          >
+            <Icon name="car-key" size={17} class="text-gold" />
+            <span class="font-display text-[0.82rem] font-bold text-on-ink">Car Key Programming</span>
+          </div>
+
+          <div
+            class="hero-float hero-float--slower absolute bottom-[10%] left-[8%] flex items-center gap-2 rounded-xl border border-white/12 bg-ink-card/85 px-3.5 py-2.5 shadow-lift backdrop-blur-md"
+          >
+            <Icon name="rekey" size={17} class="text-gold" />
+            <span class="font-display text-[0.82rem] font-bold text-on-ink">Rekeying &amp; Repairs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-orbit {
+    transform-box: view-box;
+    transform-origin: 200px 215px;
+    animation: hero-spin 48s linear infinite;
+  }
+
+  .hero-pulse {
+    transform-box: view-box;
+    transform-origin: 200px 252px;
+    animation: hero-breathe 5.5s ease-in-out infinite;
+  }
+
+  .hero-float {
+    animation: hero-drift 7s ease-in-out infinite;
+  }
+  .hero-float--slow {
+    animation-duration: 8.5s;
+    animation-delay: -2s;
+  }
+  .hero-float--slower {
+    animation-duration: 10s;
+    animation-delay: -4s;
+  }
+
+  @keyframes hero-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes hero-breathe {
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(0.92);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes hero-drift {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-9px);
+    }
+  }
+</style>

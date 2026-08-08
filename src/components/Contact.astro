@@ -1,0 +1,484 @@
+---
+import Icon from './Icon.astro';
+import { site, telHref, mailHref, whatsappHref, WA_DEFAULT_MESSAGE } from '../data/site';
+import { serviceOptions } from '../data/services';
+
+const wa = whatsappHref(WA_DEFAULT_MESSAGE);
+
+const channels = [
+  {
+    icon: 'phone',
+    label: 'Phone',
+    value: site.phoneDisplay,
+    href: telHref,
+    note: 'Fastest way to reach us',
+  },
+  {
+    icon: 'whatsapp',
+    label: 'WhatsApp',
+    value: site.phoneDisplay,
+    href: wa,
+    note: 'Send photos of the lock or key',
+    external: true,
+  },
+  {
+    icon: 'mail',
+    label: 'Email',
+    value: site.email,
+    href: mailHref,
+    note: 'For quotes and non-urgent work',
+  },
+  ...(site.instagram
+    ? [
+        {
+          icon: 'instagram',
+          label: 'Instagram',
+          value: '@keypointlocksmith',
+          href: site.instagram,
+          note: 'Recent work and updates',
+          external: true,
+        },
+      ]
+    : []),
+];
+---
+
+<section id="contact" class="section-y bg-paper text-on-paper" aria-labelledby="contact-heading">
+  <div class="container-page">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="eyebrow reveal text-gold-deep">Get in touch</p>
+      <h2 id="contact-heading" class="reveal mt-4 text-3xl sm:text-4xl lg:text-[2.75rem]">
+        Talk to a locksmith, not a call centre
+      </h2>
+      <p class="reveal mt-5 text-[1.0625rem] text-on-paper-muted">
+        Call or WhatsApp for anything urgent. For quotes and scheduled work, send the form and
+        we'll get back to you.
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-6 lg:mt-16 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] lg:gap-8">
+      <!-- ------------------------------------------------------------ -->
+      <!-- Direct contact                                                -->
+      <!-- ------------------------------------------------------------ -->
+      <div class="reveal flex flex-col rounded-2xl bg-ink p-6 text-on-ink shadow-lift sm:p-8">
+        <p class="font-display text-[0.72rem] font-bold tracking-[0.16em] text-gold uppercase">
+          {site.name}
+        </p>
+        <p class="mt-2 font-display text-xl font-bold sm:text-2xl">
+          {site.owner}
+        </p>
+        <p class="mt-2 text-[0.95rem] text-on-ink-muted">
+          Residential, commercial and automotive locksmith services across Ventura County, the San
+          Fernando Valley and Los Angeles.
+        </p>
+
+        <!-- The two actions that matter in an emergency, sized accordingly -->
+        <div class="mt-7 grid gap-3 sm:grid-cols-2">
+          <a href={telHref} class="btn btn-gold !min-h-[3.4rem]" data-cta="contact-call">
+            <Icon name="phone" size={19} />
+            Call Now
+          </a>
+          <a
+            href={wa}
+            target="_blank"
+            rel="noopener"
+            class="btn btn-whatsapp !min-h-[3.4rem]"
+            data-cta="contact-whatsapp"
+          >
+            <Icon name="whatsapp" size={19} />
+            WhatsApp
+          </a>
+        </div>
+
+        <ul class="mt-7 space-y-1 border-t border-ink-line pt-2">
+          {
+            channels.map((c) => (
+              <li>
+                <a
+                  href={c.href}
+                  target={c.external ? '_blank' : undefined}
+                  rel={c.external ? 'noopener' : undefined}
+                  class="group -mx-2 flex items-center gap-4 rounded-xl px-2 py-3.5 transition-colors duration-200 hover:bg-white/5"
+                  data-cta={`contact-${c.label.toLowerCase()}`}
+                >
+                  <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-gold/25 bg-gold/10 text-gold transition-colors duration-200 group-hover:bg-gold group-hover:text-on-gold">
+                    <Icon name={c.icon} size={19} />
+                  </span>
+                  <span class="min-w-0 flex-1">
+                    <span class="block font-display text-[0.72rem] font-bold tracking-[0.14em] text-on-ink-muted uppercase">
+                      {c.label}
+                    </span>
+                    <span class="block truncate font-display text-[1.02rem] font-bold text-on-ink transition-colors duration-200 group-hover:text-gold">
+                      {c.value}
+                    </span>
+                    <span class="block text-[0.8rem] text-on-ink-muted">{c.note}</span>
+                  </span>
+                  <Icon
+                    name="arrow-right"
+                    size={17}
+                    class="shrink-0 text-on-ink-muted transition-transform duration-200 group-hover:translate-x-1 group-hover:text-gold"
+                  />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="mt-6 flex items-start gap-2.5 rounded-xl border border-ink-line bg-white/[0.03] px-4 py-3 text-[0.85rem] text-on-ink-muted">
+          <Icon name="map-pin" size={16} class="mt-0.5 shrink-0 text-gold" />
+          {/* Wrapped so the sentence stays one flex item and reflows normally. */}
+          <span>
+            Mobile locksmith service — we come to you across <a
+              href="#service-areas"
+              class="font-semibold text-gold underline underline-offset-2">our service areas</a
+            >.
+          </span>
+        </p>
+      </div>
+
+      <!-- ------------------------------------------------------------ -->
+      <!-- Lead form                                                     -->
+      <!-- ------------------------------------------------------------ -->
+      <div class="reveal rounded-2xl border border-paper-line bg-paper-card p-6 shadow-card sm:p-8">
+        <h3 class="font-display text-xl font-bold sm:text-2xl">Request Locksmith Service</h3>
+        <p class="mt-2 text-[0.95rem] text-on-paper-muted">
+          Four quick details and we'll know exactly what you need.
+        </p>
+
+        <form id="kp-lead-form" class="mt-7 space-y-5" novalidate>
+          <!-- Honeypot: real people never see or fill this. -->
+          <div class="absolute left-[-9999px]" aria-hidden="true">
+            <label for="kp-company">Company (leave blank)</label>
+            <input id="kp-company" name="company" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div>
+            <label for="kp-name" class="kp-label">
+              Name <span class="text-alert" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="kp-name"
+              name="name"
+              type="text"
+              class="kp-input"
+              autocomplete="name"
+              placeholder="Your name"
+              required
+              aria-required="true"
+              aria-describedby="kp-name-error"
+            />
+            <p id="kp-name-error" class="kp-error" role="alert" hidden></p>
+          </div>
+
+          <div>
+            <label for="kp-phone" class="kp-label">
+              Phone <span class="text-alert" aria-hidden="true">*</span>
+            </label>
+            <input
+              id="kp-phone"
+              name="phone"
+              type="tel"
+              inputmode="tel"
+              class="kp-input"
+              autocomplete="tel"
+              placeholder="(747) 354-8313"
+              required
+              aria-required="true"
+              aria-describedby="kp-phone-error kp-phone-hint"
+            />
+            <p id="kp-phone-hint" class="mt-1.5 text-[0.8rem] text-on-paper-muted">
+              So we can call you straight back.
+            </p>
+            <p id="kp-phone-error" class="kp-error" role="alert" hidden></p>
+          </div>
+
+          <div>
+            <label for="kp-service" class="kp-label">
+              Service needed <span class="text-alert" aria-hidden="true">*</span>
+            </label>
+            <div class="relative">
+              <select
+                id="kp-service"
+                name="service"
+                class="kp-input appearance-none pr-11"
+                required
+                aria-required="true"
+                aria-describedby="kp-service-error"
+              >
+                <option value="">Choose a service…</option>
+                {serviceOptions.map((option) => <option value={option}>{option}</option>)}
+              </select>
+              <Icon
+                name="chevron-down"
+                size={18}
+                class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-on-paper-muted"
+              />
+            </div>
+            <p id="kp-service-error" class="kp-error" role="alert" hidden></p>
+          </div>
+
+          <div>
+            <label for="kp-message" class="kp-label">
+              Message <span class="font-normal text-on-paper-muted">(optional)</span>
+            </label>
+            <textarea
+              id="kp-message"
+              name="message"
+              rows="4"
+              class="kp-input resize-y"
+              placeholder="Where you are and what's happened — e.g. locked out of a Honda Civic in the Oxnard Costco lot."
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-gold btn-lg w-full" data-cta="lead-submit">
+            <span data-submit-label>Request Locksmith Service</span>
+            <span data-submit-spinner hidden class="kp-spinner" aria-hidden="true"></span>
+          </button>
+
+          <p id="kp-form-note" class="text-center text-[0.82rem] text-on-paper-muted"></p>
+
+          <p class="kp-error text-center" id="kp-form-error" role="alert" hidden></p>
+        </form>
+
+        <!-- Success panel, swapped in after a successful submit -->
+        <div id="kp-lead-success" hidden class="py-6 text-center">
+          <span class="mx-auto grid h-14 w-14 place-items-center rounded-full bg-gold text-on-gold">
+            <Icon name="check" size={28} />
+          </span>
+          <h4 class="mt-5 font-display text-xl font-bold" data-success-title>Request sent</h4>
+          <p class="mt-2 text-[0.95rem] text-on-paper-muted" data-success-body></p>
+
+          <div class="mt-6 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
+            <a href={telHref} class="btn btn-gold" data-cta="success-call">
+              <Icon name="phone" size={18} />
+              Call {site.phoneDisplay}
+            </a>
+            <button type="button" class="btn btn-ghost-light" id="kp-lead-reset">
+              Send another request
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .kp-label {
+    display: block;
+    margin-bottom: 0.45rem;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-on-paper);
+  }
+
+  .kp-input {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-paper-line);
+    border-radius: 0.75rem;
+    background-color: var(--color-paper);
+    color: var(--color-on-paper);
+    /* 16px keeps iOS Safari from zooming the viewport on focus. */
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .kp-input::placeholder {
+    color: color-mix(in srgb, var(--color-on-paper-muted) 75%, transparent);
+  }
+
+  .kp-input:hover {
+    border-color: color-mix(in srgb, var(--color-gold) 55%, var(--color-paper-line));
+  }
+
+  .kp-input:focus {
+    outline: none;
+    background-color: var(--color-paper-card);
+    border-color: var(--color-gold);
+    box-shadow: 0 0 0 4px rgb(212 162 76 / 0.16);
+  }
+
+  .kp-input[aria-invalid='true'] {
+    border-color: var(--color-alert);
+    background-color: #fef4f4;
+  }
+
+  .kp-input[aria-invalid='true']:focus {
+    box-shadow: 0 0 0 4px rgb(229 72 77 / 0.15);
+  }
+
+  .kp-error {
+    margin-top: 0.45rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #b3282d; /* 4.9:1 on --color-paper-card */
+  }
+
+  .kp-error[hidden] {
+    display: none;
+  }
+
+  .kp-spinner {
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 50%;
+    border: 2px solid rgb(20 17 10 / 0.28);
+    border-top-color: var(--color-on-gold);
+    animation: kp-spin 0.7s linear infinite;
+  }
+
+  .kp-spinner[hidden] {
+    display: none;
+  }
+
+  @keyframes kp-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
+<script>
+  import { hasBackend, postLead, formatLead, type Lead } from '../lib/leads';
+  import { site, whatsappHref, mailHref } from '../data/site';
+
+  const form = document.getElementById('kp-lead-form') as HTMLFormElement | null;
+  const success = document.getElementById('kp-lead-success');
+  const note = document.getElementById('kp-form-note');
+  const formError = document.getElementById('kp-form-error');
+
+  if (form && success && note && formError) {
+    const submit = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const label = form.querySelector('[data-submit-label]') as HTMLElement;
+    const spinner = form.querySelector('[data-submit-spinner]') as HTMLElement;
+
+    // Tell people up front where the form is going to take them.
+    note.textContent = hasBackend()
+      ? "We'll reply to the number you give us."
+      : 'Opens WhatsApp with your details ready to send.';
+
+    const fields = [
+      {
+        input: form.elements.namedItem('name') as HTMLInputElement,
+        error: document.getElementById('kp-name-error')!,
+        validate: (v: string) => (v.trim().length >= 2 ? '' : 'Please enter your name.'),
+      },
+      {
+        input: form.elements.namedItem('phone') as HTMLInputElement,
+        error: document.getElementById('kp-phone-error')!,
+        validate: (v: string) =>
+          v.replace(/\D/g, '').length >= 10 ? '' : 'Please enter a phone number we can call back.',
+      },
+      {
+        input: form.elements.namedItem('service') as HTMLSelectElement,
+        error: document.getElementById('kp-service-error')!,
+        validate: (v: string) => (v ? '' : 'Please choose the service you need.'),
+      },
+    ];
+
+    const showError = (field: (typeof fields)[number], message: string) => {
+      field.error.textContent = message;
+      field.error.hidden = !message;
+      field.input.setAttribute('aria-invalid', message ? 'true' : 'false');
+    };
+
+    // Validate on blur, then live-correct once a field has been flagged, so the
+    // form never nags someone who is still typing.
+    fields.forEach((field) => {
+      field.input.addEventListener('blur', () => showError(field, field.validate(field.input.value)));
+      field.input.addEventListener('input', () => {
+        if (field.input.getAttribute('aria-invalid') === 'true') {
+          showError(field, field.validate(field.input.value));
+        }
+      });
+    });
+
+    const setBusy = (busy: boolean) => {
+      submit.disabled = busy;
+      spinner.hidden = !busy;
+      label.textContent = busy ? 'Sending…' : 'Request Locksmith Service';
+    };
+
+    const showSuccess = (title: string, body: string) => {
+      (success.querySelector('[data-success-title]') as HTMLElement).textContent = title;
+      (success.querySelector('[data-success-body]') as HTMLElement).textContent = body;
+      form.hidden = true;
+      success.hidden = false;
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      formError.hidden = true;
+
+      // Honeypot — a bot filled the hidden field, so pretend all is well.
+      if ((form.elements.namedItem('company') as HTMLInputElement).value) {
+        showSuccess('Request sent', 'Thanks — we will be in touch shortly.');
+        return;
+      }
+
+      let firstInvalid: HTMLElement | null = null;
+      fields.forEach((field) => {
+        const message = field.validate(field.input.value);
+        showError(field, message);
+        if (message && !firstInvalid) firstInvalid = field.input;
+      });
+
+      if (firstInvalid) {
+        (firstInvalid as HTMLElement).focus();
+        return;
+      }
+
+      const lead: Lead = {
+        name: (form.elements.namedItem('name') as HTMLInputElement).value.trim(),
+        phone: (form.elements.namedItem('phone') as HTMLInputElement).value.trim(),
+        service: (form.elements.namedItem('service') as HTMLSelectElement).value,
+        message: (form.elements.namedItem('message') as HTMLTextAreaElement).value,
+      };
+
+      if (!hasBackend()) {
+        // No server yet: hand the completed message to WhatsApp. The window is
+        // opened synchronously so mobile browsers do not treat it as a popup.
+        window.open(whatsappHref(formatLead(lead)), '_blank', 'noopener');
+        showSuccess(
+          'WhatsApp is open',
+          `Tap send in WhatsApp and ${site.owner.split(' ')[0]} will get your request. In a hurry? Call ${site.phoneDisplay} instead.`
+        );
+        form.reset();
+        return;
+      }
+
+      setBusy(true);
+      try {
+        await postLead(lead);
+        showSuccess(
+          'Request sent',
+          `Thanks ${lead.name.split(' ')[0]} — your request is in. We'll call you back on ${lead.phone}. If it's urgent, call ${site.phoneDisplay}.`
+        );
+        form.reset();
+      } catch {
+        formError.hidden = false;
+        formError.innerHTML =
+          `Something went wrong sending that. Please call <a class="underline font-semibold" href="tel:${site.phoneE164}">${site.phoneDisplay}</a> ` +
+          `or <a class="underline font-semibold" href="${mailHref}">email us</a> instead.`;
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    document.getElementById('kp-lead-reset')?.addEventListener('click', () => {
+      success.hidden = true;
+      form.hidden = false;
+      fields.forEach((field) => showError(field, ''));
+      (fields[0].input as HTMLElement).focus();
+    });
+  }
+</script>

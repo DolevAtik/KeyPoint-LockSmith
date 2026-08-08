@@ -1,0 +1,327 @@
+@import './fonts.css';
+@import 'tailwindcss';
+
+/* ==========================================================================
+   KeyPoint Locksmith — design system
+   Brand: black + gold, taken from the owner's logo.
+   The page alternates dark and light bands to give the long single-page
+   layout a rhythm and to keep long-form copy on a light, readable surface.
+   ========================================================================== */
+
+@theme {
+  /* -- Brand ------------------------------------------------------------- */
+  --color-gold: #d4a24c; /* 8.1:1 on --color-ink */
+  --color-gold-bright: #e8bc63;
+  --color-gold-deep: #a9761f; /* for gold text on LIGHT surfaces (4.6:1 on paper) */
+  --color-on-gold: #14110a;
+
+  /* -- Dark surfaces ----------------------------------------------------- */
+  --color-ink: #0b0d10;
+  --color-ink-raised: #12161c;
+  --color-ink-card: #161b23;
+  --color-ink-line: #262c37;
+  --color-on-ink: #f4f6f8;
+  --color-on-ink-muted: #9ba5b4; /* 7.7:1 on --color-ink */
+
+  /* -- Light surfaces ---------------------------------------------------- */
+  --color-paper: #f6f7f9;
+  --color-paper-card: #ffffff;
+  --color-paper-line: #e3e7ed;
+  --color-on-paper: #0b0d10;
+  --color-on-paper-muted: #556071; /* 7.1:1 on --color-paper */
+
+  /* -- Signal ------------------------------------------------------------ */
+  --color-alert: #e5484d;
+  --color-alert-soft: #7f1d1d;
+  --color-whatsapp: #25d366;
+  --color-whatsapp-deep: #128c7e;
+
+  /* -- Type -------------------------------------------------------------- */
+  --font-display: 'Outfit', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* -- Depth ------------------------------------------------------------- */
+  --shadow-card: 0 1px 2px rgb(11 13 16 / 0.06), 0 8px 24px -12px rgb(11 13 16 / 0.14);
+  --shadow-lift: 0 2px 4px rgb(11 13 16 / 0.08), 0 18px 40px -16px rgb(11 13 16 / 0.24);
+  --shadow-gold: 0 10px 30px -10px rgb(212 162 76 / 0.55);
+
+  /* -- Motion ------------------------------------------------------------ */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Keeps anchored section headings clear of the sticky header. */
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-on-ink);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, on-brand focus ring for keyboard users on both surfaces. */
+  :focus-visible {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-on-gold);
+  }
+
+  /* Leaflet injects its own image tags; keep them from inheriting page rules. */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ==========================================================================
+   Layout helpers
+   ========================================================================== */
+
+@utility container-page {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Vertical rhythm for full-width bands. */
+@utility section-y {
+  padding-block: 4.5rem;
+
+  @media (width >= 48rem) {
+    padding-block: 6rem;
+  }
+  @media (width >= 80rem) {
+    padding-block: 7rem;
+  }
+}
+
+/* ==========================================================================
+   Scroll reveal
+   Hidden state is scoped to `html.js` so that with JavaScript disabled — or if
+   the observer script fails to run — every section still renders at full
+   opacity. Crawlers see the markup either way.
+   ========================================================================== */
+
+@layer components {
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.7s var(--ease-out-soft),
+      transform 0.7s var(--ease-out-soft);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  .js .reveal.is-in {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Buttons                                                             */
+  /* ------------------------------------------------------------------ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    /* 48px min height everywhere: comfortably above the 44px tap target floor. */
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: -0.005em;
+    line-height: 1.2;
+    text-align: center;
+    cursor: pointer;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s var(--ease-out-soft),
+      box-shadow 0.2s ease;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn-gold {
+    background: linear-gradient(180deg, var(--color-gold-bright), var(--color-gold));
+    color: var(--color-on-gold);
+    box-shadow: var(--shadow-gold);
+  }
+
+  .btn-gold:hover {
+    background: linear-gradient(180deg, #f0c876, var(--color-gold-bright));
+    box-shadow: 0 14px 34px -10px rgb(212 162 76 / 0.7);
+  }
+
+  .btn-whatsapp {
+    background: var(--color-whatsapp);
+    color: #05271a;
+    box-shadow: 0 10px 30px -12px rgb(37 211 102 / 0.6);
+  }
+
+  .btn-whatsapp:hover {
+    background: #33e074;
+  }
+
+  /* Outline on dark surfaces */
+  .btn-ghost-dark {
+    background: rgb(255 255 255 / 0.04);
+    border-color: rgb(255 255 255 / 0.16);
+    color: var(--color-on-ink);
+    backdrop-filter: blur(6px);
+  }
+
+  .btn-ghost-dark:hover {
+    background: rgb(255 255 255 / 0.1);
+    border-color: rgb(212 162 76 / 0.55);
+  }
+
+  /* Outline on light surfaces */
+  .btn-ghost-light {
+    background: var(--color-paper-card);
+    border-color: var(--color-paper-line);
+    color: var(--color-on-paper);
+    box-shadow: var(--shadow-card);
+  }
+
+  .btn-ghost-light:hover {
+    border-color: var(--color-gold);
+    background: #fffdf8;
+  }
+
+  .btn-lg {
+    min-height: 3.5rem;
+    padding: 1rem 2rem;
+    font-size: 1.0625rem;
+    border-radius: 0.875rem;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Eyebrow label above section headings                                */
+  /* ------------------------------------------------------------------ */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Icons                                                               */
+  /* Shared presentation lives here rather than on ~150 inline <svg>      */
+  /* elements. All of these properties inherit into <use> shadow content. */
+  /* ------------------------------------------------------------------ */
+  .icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* Stops icons being squashed as flex children. */
+    flex: none;
+  }
+
+  .icon-filled {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  /* Thin gold hairline used to separate bands. */
+  .hairline-gold {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(212 162 76 / 0.5) 20%,
+      rgb(212 162 76 / 0.5) 80%,
+      transparent
+    );
+  }
+
+  /* Fine grid texture for dark hero/CTA bands. */
+  .grid-texture {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.028) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+}
+
+/* ==========================================================================
+   Reduced motion — honour the OS setting everywhere, including the loader.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

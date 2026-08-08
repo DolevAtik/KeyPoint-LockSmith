@@ -1,0 +1,229 @@
+---
+import Icon from './Icon.astro';
+import { services, categoryLabels, type ServiceCategory } from '../data/services';
+import { telHref } from '../data/site';
+
+/**
+ * Twenty equally weighted cards read as a wall, so the section is built in
+ * three layers instead: the four most-requested jobs lead the grid, the filter
+ * narrows it by category, and the tail is folded away behind "show more".
+ */
+const ordered = [...services.filter((s) => s.featured), ...services.filter((s) => !s.featured)];
+
+const filters = [
+  { key: 'all', label: 'All', count: services.length },
+  ...(Object.keys(categoryLabels) as ServiceCategory[]).map((key) => ({
+    key,
+    label: categoryLabels[key],
+    count: services.filter((s) => s.category === key).length,
+  })),
+];
+
+/**
+ * How many cards sit in front of the fold. One column on a phone makes eight
+ * cards a long scroll, so it drops to the four most-requested there.
+ * Keep both numbers in sync with the nth-child rules and the script below.
+ */
+const FOLD = { mobile: 4, wide: 8 };
+---
+
+<section id="services" class="section-y relative overflow-hidden bg-ink" aria-labelledby="services-heading">
+  <div class="grid-texture pointer-events-none absolute inset-0 opacity-50" aria-hidden="true"></div>
+  <div
+    class="pointer-events-none absolute top-0 left-1/2 h-64 w-[46rem] -translate-x-1/2 rounded-full opacity-25 blur-[110px]"
+    style="background: radial-gradient(circle, #d4a24c 0%, transparent 70%)"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="container-page relative">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="eyebrow reveal text-gold">What we do</p>
+      <h2 id="services-heading" class="reveal mt-4 text-3xl text-on-ink sm:text-4xl lg:text-[2.75rem]">
+        Our Locksmith Services
+      </h2>
+      <p class="reveal mt-5 text-[1.0625rem] text-on-ink-muted">
+        Residential, commercial and automotive work — from a midnight lockout to a master key
+        system for your building.
+      </p>
+    </div>
+
+    <!-- Category filter. Rendered only when JS is available, since without it
+         the buttons could not do anything; every card stays visible either way. -->
+    <div
+      class="reveal mt-9 hidden flex-wrap justify-center gap-2 [.js_&]:flex"
+      role="group"
+      aria-label="Filter services by category"
+      id="service-filters"
+    >
+      {
+        filters.map((f) => (
+          <button
+            type="button"
+            class="service-filter rounded-full border border-white/12 bg-white/[0.04] px-4 py-2.5 font-display text-[0.85rem] font-semibold text-on-ink-muted transition-colors duration-200 hover:border-gold/45 hover:text-on-ink"
+            data-filter={f.key}
+            aria-pressed={f.key === 'all' ? 'true' : 'false'}
+          >
+            {f.label}
+            <span class="ml-1.5 font-bold tabular-nums opacity-55">{f.count}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <ul id="service-grid" class="mt-8 grid gap-3.5 sm:grid-cols-2 lg:mt-10 lg:grid-cols-4">
+      {
+        ordered.map((s, i) => (
+          <li
+            class:list={[
+              'service-card group reveal flex flex-col items-center rounded-2xl border bg-gradient-to-b p-5 text-center transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_20px_44px_-24px_rgba(0,0,0,0.9)]',
+              s.featured
+                ? 'border-gold/25 from-[#1b202a] to-ink-raised hover:border-gold/55'
+                : 'border-white/8 from-ink-card to-ink-raised hover:border-gold/45',
+            ]}
+            data-category={s.category}
+            style={`--reveal-delay: ${Math.min(i, 7) * 50}ms`}
+          >
+            <span class="grid h-11 w-11 place-items-center rounded-xl border border-gold/20 bg-gold/10 text-gold transition-colors duration-300 group-hover:bg-gold group-hover:text-on-gold">
+              <Icon name={s.icon} size={21} />
+            </span>
+
+            <h3 class="mt-4 font-display text-[1.0625rem] leading-snug font-bold text-balance text-on-ink">
+              {s.name}
+            </h3>
+            <p class="mt-1.5 text-[0.875rem] leading-relaxed text-on-ink-muted">{s.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- The fold. Shown only with JS, and only while something is behind it. -->
+    <div id="service-fold" class="mt-7 hidden justify-center [.js_&]:flex">
+      <button
+        type="button"
+        id="service-toggle"
+        class="group inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-5 py-3 font-display text-[0.9rem] font-semibold text-on-ink transition-colors duration-200 hover:border-gold/45 hover:text-gold"
+        aria-expanded="false"
+        aria-controls="service-grid"
+      >
+        {/* Two counts so the pre-hydration label matches whichever fold the CSS
+            applied; the script replaces the whole lot on its first render. */}
+        <span data-toggle-label>
+          Show <span class="sm:hidden">{services.length - FOLD.mobile}</span><span
+            class="hidden sm:inline">{services.length - FOLD.wide}</span
+          > more
+        </span>
+        <Icon name="chevron-down" size={16} class="service-chevron transition-transform duration-300" />
+      </button>
+    </div>
+
+    <p class="reveal mt-7 text-center text-sm text-on-ink-muted">
+      Don't see your problem listed?
+      <a
+        href={telHref}
+        class="font-semibold text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:decoration-gold"
+        data-cta="services-more"
+      >
+        Call and describe it
+      </a> — chances are it's covered.
+    </p>
+  </div>
+</section>
+
+<style>
+  .service-filter[aria-pressed='true'] {
+    background-color: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-on-gold);
+  }
+
+  /* Both the filter and the fold hide cards through the `hidden` attribute,
+     which the utility classes on the card would otherwise win against. */
+  .service-card[hidden] {
+    display: none;
+  }
+
+  #service-fold[hidden] {
+    display: none;
+  }
+
+  #service-toggle[aria-expanded='true'] .service-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Folds the tail before the script runs, so the section never flashes at full
+     height. Once the script marks the grid ready it owns visibility itself —
+     nth-child cannot follow along once a category filter is applied. */
+  .js #service-grid:not([data-ready]) .service-card:nth-child(n + 5) {
+    display: none;
+  }
+
+  @media (width >= 40rem) {
+    .js #service-grid:not([data-ready]) .service-card:nth-child(n + 9) {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const filterBar = document.getElementById('service-filters');
+  const grid = document.getElementById('service-grid');
+  const fold = document.getElementById('service-fold');
+  const toggle = document.getElementById('service-toggle');
+  const toggleLabel = toggle?.querySelector<HTMLElement>('[data-toggle-label]');
+
+  if (filterBar && grid && fold && toggle && toggleLabel) {
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('.service-card'));
+    const buttons = Array.from(filterBar.querySelectorAll<HTMLButtonElement>('.service-filter'));
+
+    // Matches the `sm` breakpoint and the nth-child rules in the style block.
+    const wide = window.matchMedia('(min-width: 40rem)');
+
+    let active = 'all';
+    let expanded = false;
+
+    const render = () => {
+      const limit = wide.matches ? 8 : 4;
+      let matched = 0;
+
+      for (const card of cards) {
+        const matches = active === 'all' || card.dataset.category === active;
+        card.hidden = !matches || (!expanded && matched >= limit);
+        if (matches) matched++;
+      }
+
+      // Nothing behind the fold in the smaller categories — drop the control.
+      fold.hidden = matched <= limit;
+      toggle.setAttribute('aria-expanded', String(expanded));
+      toggleLabel.textContent = expanded ? 'Show fewer' : `Show ${matched - limit} more`;
+    };
+
+    filterBar.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('.service-filter');
+      if (!button) return;
+
+      active = button.dataset.filter ?? 'all';
+      expanded = false; // a fresh category starts folded again
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+      render();
+    });
+
+    toggle.addEventListener('click', () => {
+      const before = toggle.getBoundingClientRect().top;
+      expanded = !expanded;
+      render();
+
+      // Collapsing pulls rows out from above the button; hold it under the
+      // cursor instead of letting the page jump.
+      if (!expanded) {
+        window.scrollBy(0, toggle.getBoundingClientRect().top - before);
+      }
+    });
+
+    // Rotating a phone changes how many cards fit in front of the fold.
+    wide.addEventListener('change', render);
+
+    grid.dataset.ready = '';
+    render();
+  }
+</script>

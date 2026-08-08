@@ -1,0 +1,214 @@
+---
+import Icon from './Icon.astro';
+import { reviews, REVIEWS_ARE_PLACEHOLDER } from '../data/reviews';
+import { site, telHref } from '../data/site';
+
+/**
+ * Reviews section.
+ *
+ * Layout: scroll-snap carousel below `lg`, three-column grid above it. The
+ * carousel is CSS-only (scroll-snap) so swiping works with no JavaScript; the
+ * dots are a progressive enhancement layered on top.
+ *
+ * Integrating real Google reviews later: keep this markup and swap the source
+ * of `reviews` in src/data/reviews.ts for whatever feed you use (a build-time
+ * fetch of the Google Places API, a pasted export, or a widget). The card only
+ * needs name / rating / review / service / location.
+ */
+
+const initials = (name: string) =>
+  name
+    .split(' ')
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+
+if (REVIEWS_ARE_PLACEHOLDER) {
+  console.warn(
+    '\n[KeyPoint] Reviews are still PLACEHOLDER content.\n' +
+      '           Replace them in src/data/reviews.ts and set\n' +
+      '           REVIEWS_ARE_PLACEHOLDER = false before going live.\n'
+  );
+}
+---
+
+<section id="reviews" class="section-y relative overflow-hidden bg-ink" aria-labelledby="reviews-heading">
+  <div class="grid-texture pointer-events-none absolute inset-0 opacity-40" aria-hidden="true"></div>
+  <div
+    class="pointer-events-none absolute -bottom-40 left-1/2 h-[26rem] w-[46rem] -translate-x-1/2 rounded-full opacity-20 blur-[120px]"
+    style="background: radial-gradient(circle, #d4a24c 0%, transparent 70%)"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="container-page relative">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="eyebrow reveal text-gold">Testimonials</p>
+      <h2 id="reviews-heading" class="reveal mt-4 text-3xl text-on-ink sm:text-4xl lg:text-[2.75rem]">
+        What Our Customers Say
+      </h2>
+      <p class="reveal mt-5 text-[1.0625rem] text-on-ink-muted">
+        Locksmith work is something you only need when something has gone wrong. Here's the kind of
+        help people call {site.owner.split(' ')[0]} for.
+      </p>
+    </div>
+
+    {
+      /* Honesty guard: while the sample copy is in place, the site says so
+         plainly rather than passing invented quotes off as real feedback.
+         Delete this block together with the flag in src/data/reviews.ts. */
+      REVIEWS_ARE_PLACEHOLDER && (
+        <p
+          class="reveal mx-auto mt-8 flex max-w-2xl items-start gap-3 rounded-xl border border-gold/25 bg-gold/[0.07] px-4 py-3.5 text-left text-[0.875rem] text-on-ink-muted"
+          role="note"
+        >
+          <Icon name="alert" size={17} class="mt-0.5 shrink-0 text-gold" />
+          <span>
+            <strong class="font-semibold text-on-ink">Example reviews.</strong> These illustrate the
+            kind of work {site.name} does while the site is being set up — they are not real
+            customer feedback and will be replaced with genuine reviews.
+          </span>
+        </p>
+      )
+    }
+
+    <!-- Carousel below lg, grid at lg and above -->
+    <div
+      id="kp-reviews-track"
+      class="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 lg:mt-14 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:pb-0"
+      style="scrollbar-width: none;"
+    >
+      {
+        reviews.map((review, i) => (
+          <figure
+            class="review-slide reveal flex w-[85vw] max-w-[22rem] shrink-0 snap-center flex-col rounded-2xl border border-white/8 bg-gradient-to-b from-ink-card to-ink-raised p-6 sm:w-[24rem] lg:w-auto lg:max-w-none lg:shrink lg:p-7"
+            style={`--reveal-delay: ${Math.min(i, 3) * 80}ms`}
+            data-slide={i}
+          >
+            <Icon name="quote" size={26} class="text-gold/35" />
+
+            <div
+              class="mt-4 flex items-center gap-0.5 text-gold"
+              role="img"
+              aria-label={`Rated ${review.rating} out of 5`}
+            >
+              {Array.from({ length: 5 }).map((_, s) => (
+                <Icon name="star" size={16} class={s < review.rating ? 'text-gold' : 'text-white/15'} />
+              ))}
+            </div>
+
+            <blockquote class="mt-4 grow text-[0.98rem] leading-relaxed text-on-ink/90">
+              {review.review}
+            </blockquote>
+
+            <figcaption class="mt-6 flex items-center gap-3 border-t border-white/8 pt-5">
+              <span
+                class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-gold/30 bg-gold/10 font-display text-[0.85rem] font-bold text-gold"
+                aria-hidden="true"
+              >
+                {initials(review.name)}
+              </span>
+              <span class="min-w-0">
+                <span class="block font-display text-[0.95rem] font-bold text-on-ink">
+                  {review.name}
+                </span>
+                <span class="block text-[0.8rem] leading-snug text-on-ink-muted">
+                  {[review.service, review.location].filter(Boolean).join(' · ')}
+                </span>
+              </span>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    <!-- Carousel position dots (mobile/tablet only) -->
+    <div
+      id="kp-reviews-dots"
+      class="mt-1 flex justify-center gap-2 lg:hidden"
+      role="tablist"
+      aria-label="Review navigation"
+    >
+      {
+        reviews.map((_, i) => (
+          <button
+            type="button"
+            class="review-dot h-2.5 rounded-full bg-white/20 transition-all duration-300"
+            data-dot={i}
+            role="tab"
+            aria-label={`Go to review ${i + 1}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+          />
+        ))
+      }
+    </div>
+
+    <div class="reveal mt-12 flex flex-col items-center gap-4 text-center">
+      <p class="text-[0.95rem] text-on-ink-muted">Had work done by KeyPoint Locksmith?</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        {
+          site.googleReviewUrl && (
+            <a href={site.googleReviewUrl} target="_blank" rel="noopener" class="btn btn-ghost-dark">
+              <Icon name="star" size={17} class="text-gold" />
+              Read our Google reviews
+            </a>
+          )
+        }
+        <a href={telHref} class="btn btn-gold" data-cta="reviews-call">
+          <Icon name="phone" size={18} />
+          Call {site.phoneDisplay}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  #kp-reviews-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .review-dot {
+    width: 0.625rem;
+  }
+
+  .review-dot[aria-selected='true'] {
+    width: 1.75rem;
+    background-color: var(--color-gold);
+  }
+</style>
+
+<script>
+  const track = document.getElementById('kp-reviews-track');
+  const dotsWrap = document.getElementById('kp-reviews-dots');
+
+  if (track && dotsWrap) {
+    const slides = Array.from(track.querySelectorAll<HTMLElement>('.review-slide'));
+    const dots = Array.from(dotsWrap.querySelectorAll<HTMLButtonElement>('.review-dot'));
+
+    const select = (index: number) =>
+      dots.forEach((dot, i) => dot.setAttribute('aria-selected', String(i === index)));
+
+    // Track the most-visible slide rather than listening to every scroll frame.
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((e) => e.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (visible) select(Number((visible.target as HTMLElement).dataset.slide));
+        },
+        { root: track, threshold: [0.5, 0.75, 1] }
+      );
+      slides.forEach((slide) => io.observe(slide));
+    }
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        slides[i]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        select(i);
+      });
+    });
+  }
+</script>

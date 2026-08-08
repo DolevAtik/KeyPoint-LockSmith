@@ -1,0 +1,286 @@
+---
+import { Image } from 'astro:assets';
+import logoLight from '../assets/logo-light.png';
+import Icon from './Icon.astro';
+import { site, telHref, mailHref, whatsappHref, navLinks, WA_DEFAULT_MESSAGE } from '../data/site';
+
+const wa = whatsappHref(WA_DEFAULT_MESSAGE);
+---
+
+{/* Watched by the script below to decide when the header turns solid. */}
+<div id="kp-top-sentinel" aria-hidden="true"></div>
+
+<header id="kp-header" class="sticky top-0 z-50 transition-[background-color,box-shadow,border-color] duration-300">
+  <div class="border-b border-transparent bg-transparent transition-colors duration-300" data-header-surface>
+    <nav class="container-page flex h-[68px] items-center justify-between gap-4 lg:h-[80px]" aria-label="Main">
+      <a href="#home" class="shrink-0 rounded-lg" aria-label={`${site.name} — back to top`}>
+        <Image
+          src={logoLight}
+          alt="KeyPoint Locksmith logo"
+          width={172}
+          height={92}
+          loading="eager"
+          class="h-9 w-auto sm:h-10 lg:h-11"
+        />
+      </a>
+
+      <!-- Desktop links -->
+      <ul class="hidden items-center gap-1 lg:flex">
+        {
+          navLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="relative rounded-lg px-3.5 py-2 font-display text-[0.95rem] font-semibold text-on-ink/85 transition-colors duration-200 hover:text-gold focus-visible:text-gold"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <!-- Desktop actions -->
+      <div class="hidden items-center gap-2.5 lg:flex">
+        <a
+          href={wa}
+          target="_blank"
+          rel="noopener"
+          class="btn btn-ghost-dark !min-h-[46px] !px-3.5"
+          aria-label="Message KeyPoint Locksmith on WhatsApp"
+          title="WhatsApp"
+        >
+          <Icon name="whatsapp" size={20} class="text-whatsapp" />
+        </a>
+        <a href={telHref} class="btn btn-gold !min-h-[46px] !px-5" data-cta="nav-call">
+          <Icon name="phone" size={18} />
+          <span class="flex flex-col items-start leading-none">
+            <span class="text-[0.6rem] font-bold tracking-[0.18em] uppercase opacity-75">Call Now</span>
+            <span class="mt-0.5 text-[0.95rem] tracking-tight">{site.phoneDisplay}</span>
+          </span>
+        </a>
+      </div>
+
+      <!-- Mobile actions: one-tap call stays visible at all times -->
+      <div class="flex items-center gap-2 lg:hidden">
+        <a
+          href={telHref}
+          class="btn btn-gold !min-h-[44px] !gap-2 !px-4 !text-[0.9rem]"
+          data-cta="nav-call-mobile"
+        >
+          <Icon name="phone" size={17} />
+          <span>Call</span>
+        </a>
+        <button
+          type="button"
+          id="kp-menu-btn"
+          class="grid h-11 w-11 place-items-center rounded-xl border border-white/15 bg-white/5 text-on-ink transition-colors duration-200 hover:border-gold/50 hover:bg-white/10"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="kp-mobile-nav"
+        >
+          <Icon name="menu" size={22} />
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- Mobile navigation drawer -->
+<div
+  id="kp-mobile-nav"
+  class="fixed inset-0 z-[60] hidden lg:!hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Site menu"
+>
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close-menu></div>
+
+  <div
+    id="kp-mobile-panel"
+    class="absolute inset-y-0 right-0 flex w-[min(22rem,88vw)] flex-col overflow-y-auto border-l border-ink-line bg-ink-raised shadow-2xl"
+  >
+    <div class="flex items-center justify-between border-b border-ink-line px-5 py-4">
+      <Image src={logoLight} alt="KeyPoint Locksmith logo" width={150} height={80} class="h-8 w-auto" />
+      <button
+        type="button"
+        class="grid h-11 w-11 place-items-center rounded-xl border border-white/15 bg-white/5 text-on-ink"
+        aria-label="Close menu"
+        data-close-menu
+      >
+        <Icon name="close" size={20} />
+      </button>
+    </div>
+
+    <nav class="px-5 py-4" aria-label="Mobile">
+      <ul class="flex flex-col">
+        {
+          navLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="flex items-center justify-between border-b border-ink-line/70 py-4 font-display text-lg font-bold text-on-ink transition-colors duration-200 hover:text-gold"
+                data-close-menu
+              >
+                {link.label}
+                <Icon name="chevron-right" size={18} class="text-on-ink-muted" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="mt-auto space-y-2.5 border-t border-ink-line bg-ink px-5 py-5">
+      <p class="mb-1 font-display text-[0.7rem] font-bold tracking-[0.16em] text-on-ink-muted uppercase">
+        Get in touch
+      </p>
+
+      <a href={telHref} class="btn btn-gold w-full !justify-start !text-[1.05rem]" data-cta="drawer-call">
+        <Icon name="phone" size={20} />
+        Call {site.phoneDisplay}
+      </a>
+
+      <a
+        href={wa}
+        target="_blank"
+        rel="noopener"
+        class="btn btn-whatsapp w-full !justify-start !text-[1.05rem]"
+        data-cta="drawer-whatsapp"
+      >
+        <Icon name="whatsapp" size={20} />
+        WhatsApp
+      </a>
+
+      <a href={mailHref} class="btn btn-ghost-dark w-full !justify-start" data-cta="drawer-email">
+        <Icon name="mail" size={20} class="text-gold" />
+        Email us
+      </a>
+
+      {
+        site.instagram && (
+          <a
+            href={site.instagram}
+            target="_blank"
+            rel="noopener"
+            class="btn btn-ghost-dark w-full !justify-start"
+            data-cta="drawer-instagram"
+          >
+            <Icon name="instagram" size={20} class="text-gold" />
+            Instagram
+          </a>
+        )
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  #kp-top-sentinel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1px;
+    width: 1px;
+    pointer-events: none;
+  }
+
+  /* Solid, legible header once the hero has scrolled away. */
+  #kp-header.is-stuck [data-header-surface] {
+    background-color: color-mix(in srgb, var(--color-ink) 88%, transparent);
+    border-bottom-color: var(--color-ink-line);
+    box-shadow: 0 10px 30px -18px rgb(0 0 0 / 0.9);
+    backdrop-filter: blur(14px) saturate(140%);
+  }
+
+  #kp-mobile-nav.is-open {
+    display: block;
+  }
+
+  #kp-mobile-panel {
+    transform: translateX(100%);
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  #kp-mobile-nav.is-open #kp-mobile-panel {
+    transform: translateX(0);
+  }
+</style>
+
+<script>
+  // --- Header state -------------------------------------------------------
+  const header = document.getElementById('kp-header');
+  const sentinel = document.getElementById('kp-top-sentinel');
+
+  if (header && sentinel && 'IntersectionObserver' in window) {
+    // Observing a 1px sentinel avoids running a handler on every scroll frame.
+    new IntersectionObserver(
+      ([entry]) => header.classList.toggle('is-stuck', !entry.isIntersecting),
+      { threshold: 0 }
+    ).observe(sentinel);
+  }
+
+  // --- Mobile drawer ------------------------------------------------------
+  const drawer = document.getElementById('kp-mobile-nav');
+  const panel = document.getElementById('kp-mobile-panel');
+  const menuBtn = document.getElementById('kp-menu-btn');
+
+  if (drawer && panel && menuBtn) {
+    const FOCUSABLE = 'a[href], button:not([disabled])';
+    let lastFocused: HTMLElement | null = null;
+
+    const open = () => {
+      lastFocused = document.activeElement as HTMLElement;
+      drawer.classList.add('is-open');
+      menuBtn.setAttribute('aria-expanded', 'true');
+      document.documentElement.style.overflow = 'hidden';
+      panel.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+    };
+
+    const close = () => {
+      drawer.classList.remove('is-open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+      document.documentElement.style.overflow = '';
+      lastFocused?.focus();
+    };
+
+    menuBtn.addEventListener('click', open);
+
+    // Backdrop, close button, and every in-drawer link dismiss the panel.
+    drawer.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('[data-close-menu]')) close();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!drawer.classList.contains('is-open')) return;
+
+      if (e.key === 'Escape') {
+        close();
+        return;
+      }
+
+      // Keep tabbing inside the drawer while it owns the screen.
+      if (e.key === 'Tab') {
+        const items = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+          (el) => el.offsetParent !== null
+        );
+        if (!items.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    // A resize into the desktop layout should not leave the drawer stranded.
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => {
+      if (e.matches && drawer.classList.contains('is-open')) close();
+    });
+  }
+</script>

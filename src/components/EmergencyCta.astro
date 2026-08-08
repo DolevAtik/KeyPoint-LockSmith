@@ -1,0 +1,86 @@
+---
+import Icon from './Icon.astro';
+import { site, telHref, whatsappHref, WA_EMERGENCY_MESSAGE } from '../data/site';
+
+const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
+---
+
+<section
+  id="emergency"
+  class="relative overflow-hidden bg-[linear-gradient(135deg,#f0cd82_0%,#d4a24c_45%,#a9761f_100%)]"
+  aria-labelledby="emergency-heading"
+>
+  <!-- Texture + oversized keyhole watermark -->
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div
+      class="absolute inset-0 opacity-[0.16]"
+      style="background-image: linear-gradient(rgba(0,0,0,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.5) 1px, transparent 1px); background-size: 46px 46px;"
+    >
+    </div>
+    <svg
+      class="absolute -top-16 -right-10 h-[26rem] w-[26rem] text-on-gold/[0.07] sm:-right-4"
+      viewBox="0 0 100 100"
+      fill="currentColor"
+    >
+      <circle cx="50" cy="38" r="17" />
+      <path d="M42 52h16l6 36H36z" />
+    </svg>
+  </div>
+
+  <div class="container-page relative py-16 sm:py-20 lg:py-24">
+    <div class="mx-auto max-w-3xl text-center">
+      <p
+        class="eyebrow reveal inline-flex items-center gap-2 rounded-full border border-on-gold/25 bg-on-gold/10 px-4 py-2 text-on-gold"
+      >
+        <Icon name="alert" size={15} />
+        Emergency Locksmith
+      </p>
+
+      <h2
+        id="emergency-heading"
+        class="reveal mt-6 text-[2.1rem] leading-[1.06] text-on-gold sm:text-5xl lg:text-[3.4rem]"
+        style="--reveal-delay: 60ms"
+      >
+        Locked Out? We're Ready to Help.
+      </h2>
+
+      <p
+        class="reveal mx-auto mt-5 max-w-xl text-[1.0625rem] font-medium text-on-gold/80 sm:text-lg"
+        style="--reveal-delay: 120ms"
+      >
+        Don't waste time scrolling through search results. Call {site.owner} at {site.name} for
+        professional locksmith assistance with your home, business or vehicle.
+      </p>
+
+      <!-- Oversized targets: this block is built for a one-handed tap on a phone -->
+      <div
+        class="reveal mx-auto mt-9 flex max-w-lg flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center"
+        style="--reveal-delay: 180ms"
+      >
+        <a
+          href={telHref}
+          class="btn btn-lg group w-full !min-h-[3.75rem] bg-ink !text-[1.05rem] text-gold-bright shadow-[0_16px_40px_-14px_rgba(0,0,0,0.65)] hover:bg-[#15191f] sm:w-auto sm:!min-h-[4rem] sm:!text-[1.15rem]"
+          data-cta="emergency-call"
+        >
+          <Icon name="phone" size={22} class="transition-transform duration-300 group-hover:-rotate-12" />
+          <span class="tracking-tight">CALL NOW — {site.phoneDisplay}</span>
+        </a>
+
+        <a
+          href={wa}
+          target="_blank"
+          rel="noopener"
+          class="btn btn-lg w-full !min-h-[3.75rem] border-on-gold/25 bg-on-gold/[0.07] !text-[1.05rem] text-on-gold backdrop-blur-sm hover:bg-on-gold/15 sm:w-auto sm:!min-h-[4rem]"
+          data-cta="emergency-whatsapp"
+        >
+          <Icon name="whatsapp" size={22} />
+          WhatsApp Us
+        </a>
+      </div>
+
+      <p class="reveal mt-6 text-sm font-medium text-on-gold/70" style="--reveal-delay: 220ms">
+        Homes · Businesses · Vehicles — Ventura County, the San Fernando Valley &amp; Los Angeles
+      </p>
+    </div>
+  </div>
+</section>

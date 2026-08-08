@@ -1,0 +1,177 @@
+---
+import '../styles/global.css';
+import { site } from '../data/site';
+import { allAreas } from '../data/areas';
+import { services } from '../data/services';
+import Loader from '../components/Loader.astro';
+import IconSprite from '../components/IconSprite.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Set false on pages that should not carry the business structured data. */
+  structuredData?: boolean;
+}
+
+const {
+  title = site.seo.title,
+  description = site.seo.description,
+  structuredData = true,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+const ogImage = new URL('/og-image.jpg', Astro.site ?? site.url).href;
+
+/**
+ * LocalBusiness (Locksmith) record.
+ *
+ * Contains only facts the owner supplied. Deliberately omits `address`,
+ * `openingHours`, `priceRange`, `aggregateRating` and `review` — inventing any
+ * of those would be dishonest and, in the case of ratings, a Google
+ * structured-data policy violation. `areaServed` is the real coverage list.
+ */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Locksmith',
+  '@id': `${site.url}/#business`,
+  name: site.name,
+  url: site.url,
+  image: ogImage,
+  logo: new URL('/favicon-512.png', Astro.site ?? site.url).href,
+  description:
+    'Residential, commercial and automotive locksmith services across Ventura County, the San Fernando Valley and the greater Los Angeles area.',
+  telephone: site.phoneE164,
+  email: site.email,
+  founder: { '@type': 'Person', name: site.owner },
+  ...(site.instagram ? { sameAs: [site.instagram] } : {}),
+  areaServed: allAreas.map((a) => ({
+    '@type': 'City',
+    name: a.city,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: a.city,
+      addressRegion: 'CA',
+      addressCountry: 'US',
+      postalCode: a.zips[0],
+    },
+    geo: { '@type': 'GeoCoordinates', latitude: a.lat, longitude: a.lng },
+  })),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Locksmith Services',
+    itemListElement: services.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.name, description: s.description },
+    })),
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: site.phoneE164,
+    email: site.email,
+    contactType: 'Customer Service',
+    availableLanguage: ['English'],
+  },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0b0d10" />
+    <meta name="format-detection" content="telephone=yes" />
+
+    <!-- Local SEO signals -->
+    <meta name="geo.region" content="US-CA" />
+    <meta name="geo.placename" content="Ventura County, California" />
+
+    <!-- Icons -->
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon-192.png" sizes="192x192" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- The hero headline is the LCP element; its font is fetched up front. -->
+    <link rel="preload" href="/fonts/outfit-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="KeyPoint Locksmith — emergency locksmith services in Ventura County and Los Angeles"
+    />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter/X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script is:inline>
+      // Marks JS as available so scroll-reveal can start from a hidden state.
+      // Without this class every section renders fully visible, which is what
+      // no-JS visitors and crawlers get.
+      document.documentElement.classList.add('js');
+    </script>
+
+    {
+      structuredData && (
+        <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+      )
+    }
+  </head>
+
+  <body>
+    <Loader />
+    <IconSprite />
+
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[300] focus:rounded-lg focus:bg-gold focus:px-5 focus:py-3 focus:font-semibold focus:text-on-gold"
+    >
+      Skip to main content
+    </a>
+
+    <slot />
+
+    <script>
+      // ---------------------------------------------------------------------
+      // Scroll reveal. One shared IntersectionObserver, unobserving as it goes,
+      // so scrolling stays cheap on low-end phones.
+      // ---------------------------------------------------------------------
+      const reveals = document.querySelectorAll<HTMLElement>('.reveal');
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+        );
+        reveals.forEach((el) => io.observe(el));
+      } else {
+        reveals.forEach((el) => el.classList.add('is-in'));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+---
+/**
+ * Renders one icon as a <use> reference into the sprite emitted by
+ * IconSprite.astro. The page uses ~150 icons; inlining each one's path data
+ * cost roughly 50 KB of extra HTML to parse on mobile, so the geometry is
+ * declared once and referenced thereafter.
+ *
+ * Shared presentation (fill, stroke, stroke-width, linecaps) comes from the
+ * `.icon` class in global.css — all of it inherits into <use> content, so the
+ * markup at each usage site stays tiny. No `viewBox` is needed here either:
+ * the referenced <symbol> carries one and scales to this element's box.
+ */
+import { iconPaths, FILLED_ICONS } from './icon-paths';
+
+interface Props {
+  name: string;
+  size?: number | string;
+  class?: string;
+  /** Decorative by default; pass a label to expose the icon to screen readers. */
+  label?: string;
+  strokeWidth?: number;
+}
+
+const { name, size = 24, class: className = '', label, strokeWidth } = Astro.props;
+
+if (!iconPaths[name]) {
+  throw new Error(`Icon "${name}" is not defined in src/components/icon-paths.ts`);
+}
+
+const classes = ['icon', FILLED_ICONS.has(name) && 'icon-filled', className]
+  .filter(Boolean)
+  .join(' ');
+
+const a11y = label
+  ? { role: 'img', 'aria-label': label }
+  : { 'aria-hidden': 'true', focusable: 'false' };
+---
+
+<svg
+  width={size}
+  height={size}
+  class={classes}
+  stroke-width={strokeWidth}
+  {...a11y}><use href={`#kp-i-${name}`}></use></svg
+>
