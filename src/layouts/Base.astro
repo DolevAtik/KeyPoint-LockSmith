@@ -20,7 +20,9 @@ const {
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
-const ogImage = new URL('/og-image.jpg', Astro.site ?? site.url).href;
+/** Owner wordmark — served for Open Graph / Twitter / WhatsApp link previews. */
+const ogImage = new URL('/logo.jpeg', Astro.site ?? site.url).href;
+const logoUrl = ogImage;
 
 /**
  * LocalBusiness (Locksmith) record.
@@ -36,8 +38,8 @@ const jsonLd = {
   '@id': `${site.url}/#business`,
   name: site.name,
   url: site.url,
-  image: ogImage,
-  logo: new URL('/favicon-512.png', Astro.site ?? site.url).href,
+  image: logoUrl,
+  logo: logoUrl,
   description:
     'Residential, commercial and automotive locksmith services across Ventura County, the San Fernando Valley and the greater Los Angeles area.',
   telephone: site.phoneE164,
@@ -101,26 +103,31 @@ const jsonLd = {
     <link rel="preload" href="/fonts/outfit-var.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin />
 
-    <!-- Open Graph -->
+    <!-- Open Graph / social link previews -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1320" />
+    <meta property="og:image:height" content="1309" />
     <meta
       property="og:image:alt"
-      content="KeyPoint Locksmith — emergency locksmith services in Ventura County and Los Angeles"
+      content="KeyPoint Locksmith logo — emergency locksmith services in Ventura County and Los Angeles"
     />
     <meta property="og:locale" content="en_US" />
 
-    <!-- Twitter/X -->
-    <meta name="twitter:card" content="summary_large_image" />
+    <!-- Twitter/X — summary suits the near-square wordmark -->
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta
+      name="twitter:image:alt"
+      content="KeyPoint Locksmith logo — emergency locksmith services in Ventura County and Los Angeles"
+    />
 
     <script is:inline>
       // Marks JS as available so scroll-reveal can start from a hidden state.

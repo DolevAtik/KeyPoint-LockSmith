@@ -91,7 +91,7 @@ const rows = [
     </div>
 
     <p class="reveal mt-5 text-center text-sm text-on-ink-muted sm:mt-6">
-      Don't see your problem listed?
+      Don't see your problem listed?<br />
       <a
         href={telHref}
         class="font-semibold text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:decoration-gold"
@@ -151,6 +151,9 @@ const rows = [
      reachable either way. */
   .belt-row {
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
     scrollbar-width: none;
   }
 
@@ -160,6 +163,7 @@ const rows = [
 
   .belt[data-ready] .belt-row {
     overflow: hidden;
+    touch-action: manipulation;
   }
 
   .belt[data-ready] .belt-track {
@@ -206,11 +210,9 @@ const rows = [
   const toggle = document.getElementById('belt-toggle');
   const label = toggle?.querySelector<HTMLElement>('[data-belt-label]');
 
-  // Someone who asked the OS for less motion keeps the static, swipeable rows
-  // the markup already renders — nothing to animate, nothing to pause.
-  const moves =
-    !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
-    window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  // Prefer-reduced-motion keeps the static, swipeable rows. Everyone else —
+  // phones included — gets the looping belts; the Pause control covers touch.
+  const moves = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (section && belt && controls && toggle && label && moves) {
     // A second copy of each row is what makes the loop seamless: the track
