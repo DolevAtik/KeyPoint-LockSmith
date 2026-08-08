@@ -38,7 +38,7 @@ if (gallery.length === 0) {
             <li class="reveal" style={`--reveal-delay: ${Math.min(i, 3) * 80}ms`}>
               <figure class="overflow-hidden rounded-2xl border border-paper-line bg-paper-card shadow-card">
                 <div
-                  class="ba group relative aspect-[3/4] cursor-ew-resize touch-none select-none overflow-hidden bg-ink sm:aspect-[4/5]"
+                  class="ba group relative aspect-[3/4] cursor-ew-resize touch-pan-y select-none overflow-hidden bg-ink sm:aspect-[4/5]"
                   data-ba
                   role="group"
                   aria-label={`Before and after comparison: ${job.caption}`}
@@ -173,30 +173,73 @@ if (gallery.length === 0) {
     const range = root.querySelector<HTMLInputElement>('[data-ba-range]');
     if (!range) return;
 
+    /** Axis lock so vertical page scroll isn't stolen by the wipe gesture. */
+    const LOCK_PX = 8;
     let activePointer: number | null = null;
+    let mode: 'idle' | 'pending' | 'drag' = 'idle';
+    let startX = 0;
+    let startY = 0;
 
     syncFrameWidth(root);
     setPosition(root, Number(range.value) || 50);
+
+    const beginDrag = (event: PointerEvent) => {
+      mode = 'drag';
+      root.classList.add('is-dragging');
+      root.setPointerCapture(event.pointerId);
+      setPosition(root, percentFromClientX(root, event.clientX));
+    };
 
     const onPointerDown = (event: PointerEvent) => {
       // Left button / touch / pen only.
       if (event.pointerType === 'mouse' && event.button !== 0) return;
       activePointer = event.pointerId;
-      root.classList.add('is-dragging');
-      root.setPointerCapture(event.pointerId);
-      setPosition(root, percentFromClientX(root, event.clientX));
-      event.preventDefault();
+      startX = event.clientX;
+      startY = event.clientY;
+
+      // Mouse can claim immediately; touch waits for horizontal intent so the
+      // page still scrolls when the finger starts over a comparison.
+      if (event.pointerType === 'mouse') {
+        beginDrag(event);
+        event.preventDefault();
+      } else {
+        mode = 'pending';
+      }
     };
 
     const onPointerMove = (event: PointerEvent) => {
       if (activePointer !== event.pointerId) return;
+
+      if (mode === 'pending') {
+        const dx = Math.abs(event.clientX - startX);
+        const dy = Math.abs(event.clientY - startY);
+        if (dx < LOCK_PX && dy < LOCK_PX) return;
+
+        // Mostly vertical → release and let the browser scroll the page.
+        if (dy >= dx) {
+          activePointer = null;
+          mode = 'idle';
+          return;
+        }
+
+        beginDrag(event);
+      }
+
+      if (mode !== 'drag') return;
       setPosition(root, percentFromClientX(root, event.clientX));
       event.preventDefault();
     };
 
     const endDrag = (event: PointerEvent) => {
       if (activePointer !== event.pointerId) return;
+
+      // Short tap (no scroll / drag lock) still jumps the wipe to the finger.
+      if (mode === 'pending') {
+        setPosition(root, percentFromClientX(root, event.clientX));
+      }
+
       activePointer = null;
+      mode = 'idle';
       root.classList.remove('is-dragging');
       if (root.hasPointerCapture(event.pointerId)) {
         root.releasePointerCapture(event.pointerId);
