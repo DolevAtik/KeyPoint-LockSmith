@@ -9,7 +9,6 @@ import EmergencyCta from '../components/EmergencyCta.astro';
 import ServiceAreas from '../components/ServiceAreas.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
-import MobileCtaBar from '../components/MobileCtaBar.astro';
 import { gallery } from '../data/gallery';
 ---
 
@@ -18,7 +17,6 @@ import { gallery } from '../data/gallery';
 
   <main id="main">
     <Hero />
-    <MobileCtaBar />
     <Benefits />
     <Services />
     {gallery.length > 0 && <Gallery />}
