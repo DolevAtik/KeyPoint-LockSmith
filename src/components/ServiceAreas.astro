@@ -136,18 +136,9 @@ const regionsWithIndex = areaRegions.map((r) => ({
           </span>
         </button>
 
-        <div class="flex items-center justify-end gap-3 border-t border-paper-line px-3 py-2.5 sm:justify-between sm:px-4 sm:py-3">
-          <p class="hidden items-center gap-2 text-[0.8rem] text-on-paper-muted sm:flex">
-            <Icon name="map-pin" size={15} class="text-gold-deep" />
-            Select a marker or a city below to see its ZIP codes.
-          </p>
-          <button
-            type="button"
-            id="kp-map-reset"
-            class="min-h-11 rounded-lg border border-paper-line px-3 py-2 font-display text-[0.8rem] font-semibold text-on-paper transition-colors duration-200 hover:border-gold hover:text-gold-deep"
-          >
-            Show all areas
-          </button>
+        <div class="hidden items-center gap-2 border-t border-paper-line px-4 py-3 text-[0.8rem] text-on-paper-muted sm:flex">
+          <Icon name="map-pin" size={15} class="text-gold-deep" />
+          Select a marker or a city below to see its ZIP codes.
         </div>
       </div>
     </details>
@@ -328,16 +319,6 @@ const regionsWithIndex = areaRegions.map((r) => ({
     filter: drop-shadow(0 7px 10px rgb(11 13 16 / 0.45));
   }
 
-  #kp-map .leaflet-control-attribution {
-    background: rgb(255 255 255 / 0.86);
-    font-size: 10px;
-    color: #556071;
-  }
-
-  #kp-map .leaflet-control-attribution a {
-    color: #a9761f;
-  }
-
   #kp-map .leaflet-bar a {
     color: var(--color-on-paper);
   }
@@ -484,12 +465,11 @@ const regionsWithIndex = areaRegions.map((r) => ({
         const map = L.map(container, {
           scrollWheelZoom: false, // never hijack the page scroll
           zoomControl: true,
-          attributionControl: true,
+          attributionControl: false,
         });
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 18,
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         }).addTo(map);
 
         const pin = (active = false) =>
@@ -537,11 +517,6 @@ const regionsWithIndex = areaRegions.map((r) => ({
         // Wheel zoom only after a deliberate click, disabled again on leaving.
         map.on('click', () => map.scrollWheelZoom.enable());
         map.on('mouseout', () => map.scrollWheelZoom.disable());
-
-        document.getElementById('kp-map-reset')?.addEventListener('click', () => {
-          map.closePopup();
-          fitAll();
-        });
 
         // Touch devices: hold off panning until the visitor opts in, so a
         // swipe over the map scrolls the page as expected.
