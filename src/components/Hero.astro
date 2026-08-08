@@ -49,8 +49,8 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
       <!-- ------------------------------------------------------------ -->
       <!-- Copy + conversion                                             -->
       <!-- ------------------------------------------------------------ -->
-      <div class="kp-hero-copy mx-auto flex w-full max-w-2xl flex-1 flex-col justify-start gap-5 text-center font-hero sm:block sm:flex-none sm:text-left lg:mx-0">
-        <div class="kp-hero-brand flex flex-1 flex-col items-center justify-center gap-5 sm:flex-none sm:items-start sm:justify-start sm:gap-0">
+      <div class="kp-hero-copy mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-5 text-center font-hero sm:block sm:flex-none sm:text-left lg:mx-0">
+        <div class="kp-hero-brand flex flex-col items-center gap-5 sm:items-start sm:gap-0">
           <h1 class="reveal flex justify-center sm:justify-start" style="--reveal-delay: 60ms">
             <Image
               src={logo}
@@ -283,9 +283,6 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
       /* Width-derived so the three nowrap lines never run off a narrow phone. */
       font-size: clamp(1rem, calc((100vw - 2.5rem) / 17.5), 1.5rem);
       line-height: 1.65;
-      /* Nudged down without margin so the logo above keeps its position. */
-      position: relative;
-      top: 2.25rem;
     }
 
     .kp-hero-line {
@@ -293,10 +290,10 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
       white-space: nowrap;
     }
 
-    /* Pulled up toward the copy without margin, so the CTAs stay pinned. */
-    #kp-hero-reviews {
-      position: relative;
-      top: -2.25rem;
+    /* Real layout spacing rather than offsets, so a short viewport can never
+       slide the copy under the review card. Shrinks with the screen. */
+    .kp-hero-brand {
+      gap: clamp(1.25rem, 6vh, 3.25rem);
     }
   }
 
