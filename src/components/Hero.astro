@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo-light.png';
 import Icon from './Icon.astro';
 import { telHref, whatsappHref, WA_EMERGENCY_MESSAGE } from '../data/site';
 import { reviews } from '../data/reviews';
@@ -55,8 +55,8 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
             <Image
               src={logo}
               alt="KeyPoint Locksmith"
-              width={865}
-              height={471}
+              width={585}
+              height={320}
               loading="eager"
               fetchpriority="high"
               class="kp-hero-logo h-auto w-[min(100%,26rem)] lg:w-[min(100%,28rem)] xl:w-[min(100%,32rem)]"
@@ -335,8 +335,8 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
     }
 
     /* As wide as the column allows, but never wider than the vertical budget
-       left over by the copy, review card, buttons and pillars (the logo is
-       0.535 as tall as it is wide). */
+       left over by the copy, review card, buttons and pillars (logo_new is
+       ~0.547 as tall as it is wide). */
     .kp-hero-logo {
       width: min(100%, clamp(10rem, calc(136vh - 640px), 40rem));
     }

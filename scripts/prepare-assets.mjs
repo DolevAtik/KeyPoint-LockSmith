@@ -1,11 +1,14 @@
 /**
  * Asset pipeline for KeyPoint Locksmith.
  *
- * Source of truth is the owner-supplied `logo.jpeg` (black + gold wordmark on a
- * white background). Browsers need more than that, so this script derives:
+ * Sources of truth:
+ *   logo.jpeg      — wordmark on white (light surfaces)
+ *   logo_new.jpeg  — same mark already reversed onto near-black (dark surfaces + OG)
+ *
+ * This script derives:
  *
  *   src/assets/logo.png        transparent, trimmed  -> use on LIGHT surfaces
- *   src/assets/logo-light.png  transparent, reversed -> use on DARK surfaces
+ *   src/assets/logo-light.png  transparent from logo_new -> use on DARK surfaces
  *   public/favicon-*.png       square keyhole mark lifted from the logo
  *   public/apple-touch-icon.png
  *   public/og-image.jpg        1200x630 social card, built from `logo_new.jpeg`
@@ -152,12 +155,49 @@ async function main() {
   // Retina-ready: the navbar renders the mark at ~46px tall, the footer ~56px.
   const TARGET_H = 320;
 
-  for (const [name, buf] of [['logo', normal], ['logo-light', reverse]]) {
-    await fromRaw(buf, px.w, px.h)
-      .extract(crop)
+  // Light-surface mark: knock white out of logo.jpeg.
+  await fromRaw(normal, px.w, px.h)
+    .extract(crop)
+    .resize({ height: TARGET_H, withoutEnlargement: true })
+    .png({ compressionLevel: 9, palette: true, quality: 92 })
+    .toFile(path.join(ASSETS, 'logo.png'));
+
+  // Dark-surface mark: knock the near-black plate out of the owner's
+  // logo_new.jpeg so the outlined wordmark lands on the site's ink background
+  // without a rectangular matte (and without the old colour-reverse hack).
+  {
+    const { data, info } = await sharp(SOCIAL_SRC)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    const { width: w, height: h, channels: ch } = info;
+    const rgba = Buffer.alloc(w * h * 4);
+    for (let i = 0, p = 0; i < w * h; i++, p += ch) {
+      const r = data[p];
+      const g = data[p + 1];
+      const b = data[p + 2];
+      const dist = Math.hypot(r - SOCIAL_BG.r, g - SOCIAL_BG.g, b - SOCIAL_BG.b);
+      // Soft edge so JPEG ringing around the plate does not leave a halo.
+      const a = dist <= 14 ? 0 : dist >= 28 ? 255 : Math.round(((dist - 14) / 14) * 255);
+      const o = i * 4;
+      rgba[o] = r;
+      rgba[o + 1] = g;
+      rgba[o + 2] = b;
+      rgba[o + 3] = a;
+    }
+    const socialBox = contentBounds(rgba, w, h);
+    const socialPad = 6;
+    const socialCrop = {
+      left: Math.max(0, socialBox.left - socialPad),
+      top: Math.max(0, socialBox.top - socialPad),
+      width: Math.min(w, socialBox.width + socialPad * 2),
+      height: Math.min(h, socialBox.height + socialPad * 2),
+    };
+    await fromRaw(rgba, w, h)
+      .extract(socialCrop)
       .resize({ height: TARGET_H, withoutEnlargement: true })
       .png({ compressionLevel: 9, palette: true, quality: 92 })
-      .toFile(path.join(ASSETS, `${name}.png`));
+      .toFile(path.join(ASSETS, 'logo-light.png'));
   }
 
   // ---- Square icon mark ---------------------------------------------------
