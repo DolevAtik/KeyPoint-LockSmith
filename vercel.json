@@ -2,23 +2,23 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [{ "type": "host", "value": "keypoint-locksmith-one.vercel.app" }],
-      "destination": "https://www.keypointlocksmithinc.com/:path*",
+      "destination": "https://www.keypointlocksmithinc.com/$1",
       "permanent": true
     },
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [{ "type": "host", "value": "keypoint-locksmith-dolevatiks-projects.vercel.app" }],
-      "destination": "https://www.keypointlocksmithinc.com/:path*",
+      "destination": "https://www.keypointlocksmithinc.com/$1",
       "permanent": true
     },
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         { "type": "host", "value": "keypoint-locksmith-git-main-dolevatiks-projects.vercel.app" }
       ],
-      "destination": "https://www.keypointlocksmithinc.com/:path*",
+      "destination": "https://www.keypointlocksmithinc.com/$1",
       "permanent": true
     }
   ]
