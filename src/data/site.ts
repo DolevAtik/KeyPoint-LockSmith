@@ -35,8 +35,8 @@ export const site = {
    */
   googleReviewUrl: '',
 
-  /** Temporary Vercel URL until a custom domain is connected (also set in astro.config.mjs). */
-  url: 'https://keypoint-locksmith-one.vercel.app',
+  /** Live domain, `www` host (also set in astro.config.mjs). No trailing slash. */
+  url: 'https://www.keypointlocksmithinc.com',
 
   seo: {
     title: 'KeyPoint Locksmith | Emergency Locksmith — Ventura County & Los Angeles',

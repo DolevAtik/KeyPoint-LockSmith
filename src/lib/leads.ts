@@ -66,7 +66,7 @@ export function formatLead(lead: Lead): string {
 export async function postLead(lead: Lead): Promise<void> {
   const payload: Record<string, unknown> = {
     ...lead,
-    source: 'keypoint-locksmith-one.vercel.app contact form',
+    source: 'keypointlocksmithinc.com contact form',
     submittedAt: new Date().toISOString(),
     subject: `New locksmith request — ${lead.name}`,
   };
