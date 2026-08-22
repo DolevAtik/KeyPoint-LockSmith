@@ -1,8 +1,9 @@
 ---
 import Icon from './Icon.astro';
-import { site, telHref, whatsappHref, WA_EMERGENCY_MESSAGE } from '../data/site';
+import { site, telHref, whatsappHref, addressDisplay, WA_EMERGENCY_MESSAGE } from '../data/site';
 
 const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
+const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addressDisplay)}`;
 ---
 
 <section
@@ -77,6 +78,17 @@ const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
           WhatsApp Us
         </a>
       </div>
+
+      <a
+        href={mapsHref}
+        target="_blank"
+        rel="noopener"
+        class="reveal mt-6 inline-flex items-center gap-1.5 text-[0.9rem] font-medium text-on-gold/80 underline-offset-2 hover:text-on-gold hover:underline sm:mt-8"
+        style="--reveal-delay: 220ms"
+      >
+        <Icon name="map-pin" size={15} />
+        {addressDisplay}
+      </a>
     </div>
   </div>
 </section>
