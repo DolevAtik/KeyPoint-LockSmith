@@ -31,10 +31,10 @@ const logoUrl = new URL('/logo.jpeg', Astro.site ?? site.url).href;
 /**
  * LocalBusiness (Locksmith) record.
  *
- * Contains only facts the owner supplied. Deliberately omits `address`,
- * `openingHours`, `priceRange`, `aggregateRating` and `review` — inventing any
- * of those would be dishonest and, in the case of ratings, a Google
- * structured-data policy violation. `areaServed` is the real coverage list.
+ * Contains only facts the owner supplied. Deliberately omits `openingHours`,
+ * `priceRange`, `aggregateRating` and `review` — inventing any of those would
+ * be dishonest and, in the case of ratings, a Google structured-data policy
+ * violation. `areaServed` is the real coverage list.
  */
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -48,6 +48,14 @@ const jsonLd = {
     'Residential, commercial and automotive locksmith services across Ventura County, the San Fernando Valley and the greater Los Angeles area.',
   telephone: site.phoneE164,
   email: site.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    addressLocality: site.address.city,
+    addressRegion: site.address.region,
+    postalCode: site.address.postalCode,
+    addressCountry: site.address.country,
+  },
   founder: { '@type': 'Person', name: site.owner },
   ...(site.instagram ? { sameAs: [site.instagram] } : {}),
   areaServed: allAreas.map((a) => ({

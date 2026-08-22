@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import logoLight from '../assets/logo-light.png';
 import Icon from './Icon.astro';
-import { site, telHref, mailHref, whatsappHref, WA_DEFAULT_MESSAGE } from '../data/site';
+import { site, telHref, mailHref, whatsappHref, addressDisplay, WA_DEFAULT_MESSAGE } from '../data/site';
 
 const wa = whatsappHref(WA_DEFAULT_MESSAGE);
 const year = new Date().getFullYear();
@@ -58,6 +58,7 @@ const year = new Date().getFullYear();
       >
         {site.phoneDisplay}
       </a>
+      <p class="text-[0.8rem] text-on-ink-muted">{addressDisplay}</p>
       <p class="text-[0.8rem] text-on-ink-muted">&copy; {year} {site.name}. All rights reserved.</p>
 
       <div class="hidden gap-2 lg:flex">
