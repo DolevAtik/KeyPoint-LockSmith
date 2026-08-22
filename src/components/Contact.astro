@@ -1,9 +1,10 @@
 ---
 import Icon from './Icon.astro';
-import { site, telHref, mailHref, whatsappHref, WA_DEFAULT_MESSAGE } from '../data/site';
+import { site, telHref, mailHref, whatsappHref, addressDisplay, WA_DEFAULT_MESSAGE } from '../data/site';
 import { serviceOptions } from '../data/services';
 
 const wa = whatsappHref(WA_DEFAULT_MESSAGE);
+const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addressDisplay)}`;
 
 /**
  * `duplicate` marks the two channels that the big buttons directly above this
@@ -45,6 +46,14 @@ const channels: Channel[] = [
     value: site.email,
     href: mailHref,
     note: 'For quotes and non-urgent work',
+  },
+  {
+    icon: 'map-pin',
+    label: 'Address',
+    value: addressDisplay,
+    href: mapsHref,
+    note: 'Open in Google Maps',
+    external: true,
   },
   ...(site.instagram
     ? [

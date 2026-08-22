@@ -4,7 +4,7 @@
  * Nothing here is invented — it is exactly what the owner supplied. Deliberately
  * ABSENT (and which must not be added without the owner's confirmation):
  * licence numbers, years in business, certifications, opening hours, response
- * time promises, star ratings, guarantees and a street address.
+ * time promises, star ratings and guarantees.
  */
 
 export const site = {
@@ -19,6 +19,14 @@ export const site = {
   whatsappNumber: '17473548313',
 
   email: 'MenasheLidor@gmail.com',
+
+  address: {
+    street: '7520 Hesperia Ave',
+    city: 'Reseda',
+    region: 'CA',
+    postalCode: '91335',
+    country: 'US',
+  },
 
   /**
    * TODO(owner): paste the full Instagram profile URL here, e.g.
@@ -47,6 +55,9 @@ export const site = {
 
 export const telHref = `tel:${site.phoneE164}`;
 export const mailHref = `mailto:${site.email}`;
+
+/** Single-line, human-readable form of the business address. */
+export const addressDisplay = `${site.address.street}, ${site.address.city}, ${site.address.region} ${site.address.postalCode}`;
 
 /** Builds a WhatsApp click-to-chat link, optionally pre-filling the message. */
 export function whatsappHref(message?: string): string {
