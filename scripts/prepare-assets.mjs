@@ -290,7 +290,7 @@ async function main() {
        </text>
        <text x="600" y="586" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif"
              font-size="36" font-weight="700" fill="rgb(${GOLD_ON_DARK.r},${GOLD_ON_DARK.g},${GOLD_ON_DARK.b})" letter-spacing="1.5">
-         +1 747-354-8313
+         +1 805-638-5480
        </text>
      </svg>`
   );
