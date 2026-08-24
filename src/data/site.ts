@@ -12,11 +12,11 @@ export const site = {
   owner: 'Lidor Menashe',
 
   /** Human-readable form, used everywhere the number is displayed. */
-  phoneDisplay: '+1 747-354-8313',
+  phoneDisplay: '+1 805-638-5480',
   /** E.164 — used for tel: links and structured data. */
-  phoneE164: '+17473548313',
+  phoneE164: '+18056385480',
   /** Digits only, as required by wa.me. */
-  whatsappNumber: '17473548313',
+  whatsappNumber: '18056385480',
 
   email: 'MenasheLidor@gmail.com',
 
@@ -43,7 +43,7 @@ export const site = {
   seo: {
     title: 'KeyPoint Locksmith | Emergency Locksmith — Ventura County & Los Angeles',
     description:
-      'KeyPoint Locksmith provides residential, commercial and automotive locksmith services across Ventura County, the San Fernando Valley and the greater Los Angeles area. Call or WhatsApp +1 747-354-8313.',
+      'KeyPoint Locksmith provides residential, commercial and automotive locksmith services across Ventura County, the San Fernando Valley and the greater Los Angeles area. Call or WhatsApp +1 805-638-5480.',
   },
 } as const;
 
