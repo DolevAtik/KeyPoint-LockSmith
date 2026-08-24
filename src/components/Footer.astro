@@ -47,6 +47,20 @@ const year = new Date().getFullYear();
         >
           <Icon name="mail" size={18} />
         </a>
+        {
+          site.instagram && (
+            <a
+              href={site.instagram}
+              target="_blank"
+              rel="noopener"
+              class="grid h-11 w-11 place-items-center rounded-xl border border-white/12 text-gold"
+              aria-label="Follow us on Instagram"
+              data-cta="footer-instagram"
+            >
+              <Icon name="instagram" size={18} />
+            </a>
+          )
+        }
       </div>
     </div>
 
@@ -79,6 +93,20 @@ const year = new Date().getFullYear();
         >
           <Icon name="mail" size={18} />
         </a>
+        {
+          site.instagram && (
+            <a
+              href={site.instagram}
+              target="_blank"
+              rel="noopener"
+              class="grid h-11 w-11 place-items-center rounded-xl border border-white/12 text-gold"
+              aria-label="Follow us on Instagram"
+              data-cta="footer-instagram"
+            >
+              <Icon name="instagram" size={18} />
+            </a>
+          )
+        }
       </div>
     </div>
   </div>

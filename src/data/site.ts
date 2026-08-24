@@ -28,13 +28,7 @@ export const site = {
     country: 'US',
   },
 
-  /**
-   * TODO(owner): paste the full Instagram profile URL here, e.g.
-   * 'https://www.instagram.com/your-handle/'.
-   * While this is empty every Instagram link on the site is hidden rather than
-   * pointing at a guessed profile.
-   */
-  instagram: '',
+  instagram: 'https://www.instagram.com/keypointlocksmithinc',
 
   /**
    * TODO(owner): once a Google Business Profile exists, paste its review link
