@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/logo-light.png';
 import Icon from './Icon.astro';
-import { telHref, whatsappHref, WA_EMERGENCY_MESSAGE } from '../data/site';
+import { site, telHref, whatsappHref, WA_EMERGENCY_MESSAGE } from '../data/site';
 import { reviews } from '../data/reviews';
 
 const wa = whatsappHref(WA_EMERGENCY_MESSAGE);
@@ -157,6 +157,20 @@ const heroReviews = reviews.slice(0, 4).map((r) => ({
             <Icon name="whatsapp" size={22} class="text-whatsapp" />
             WhatsApp Us
           </a>
+          {
+            site.instagram && (
+              <a
+                href={site.instagram}
+                target="_blank"
+                rel="noopener"
+                class="grid h-14 w-14 shrink-0 place-items-center self-center rounded-xl border border-white/16 bg-white/[0.08] text-on-ink transition-colors duration-200 hover:border-gold/55 hover:bg-white/10 sm:h-12 sm:w-12 sm:self-auto"
+                aria-label="Follow us on Instagram"
+                data-cta="hero-instagram"
+              >
+                <Icon name="instagram" size={22} />
+              </a>
+            )
+          }
         </div>
 
         <!-- Service pillars -->
